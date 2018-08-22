@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".Login.LoginActivity"
+        tools:showIn="@layout/activity_login">
+        <RelativeLayout
+            android:id="@+id/relativeTopLogin"
+            android:layout_width="fill_parent"
+            android:layout_height="300dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            tools:context="com.renatodias.brisachips.Login.LoginActivity"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="81dp">
+
+            <View
+                android:id="@+id/logoView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/side_nav_bar" />
+
+            <!--<ImageView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:scaleType="fitXY"-->
+                <!--app:srcCompat="@mipmap/logo" />-->
+            <ImageView
+                android:id="@+id/imageViewLogin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@mipmap/logo" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relativeTopLogin">
+
+            <EditText
+                android:id="@+id/emailLogin"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:lineSpacingExtra="20sp"
+                android:hint="Email"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin"
+                android:layout_marginTop="30dp"/>
+
+            <EditText
+                android:id="@+id/senhaLogin"
+                android:inputType="textPassword"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:lineSpacingExtra="20sp"
+                android:hint="Senha"
+                android:layout_below="@+id/emailLogin"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin"
+                android:layout_marginTop="20dp"/>
+            <Button
+                android:id="@+id/entrarLogin"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/app_entrar"
+                android:layout_marginTop="20dp"
+                android:layout_below="@+id/senhaLogin"
+                android:backgroundTint="@color/logo"
+                android:background="@drawable/mybutton"
+                android:textColor="@color/branco"
+                android:onClick="clickLoginEntrar"
+                />
+
+            />
+        </RelativeLayout>
+
+    </RelativeLayout>

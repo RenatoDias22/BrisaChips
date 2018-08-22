@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4B43C0</color>
+    <color name="colorPrimaryDark">#383474</color>
+    <color name="colorAccent">#6F6AC0</color>
+
+
+    <color name="rosinha">#ffacb1</color>
+    <color name="branco">#FFFFFF</color>
+    <color name="cinzaAppPadrao">#A1A1A1</color>
+    <color name="bordas">#B5B5B5</color>
+    <color name="logo">#6F6AC0</color>
+</resources>
