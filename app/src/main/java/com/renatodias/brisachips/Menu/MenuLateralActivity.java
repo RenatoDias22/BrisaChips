@@ -1,6 +1,7 @@
 package com.renatodias.brisachips.Menu;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -39,6 +40,7 @@ public class MenuLateralActivity extends AppCompatActivity
         toolbar.setTitle(getString(R.string.title_activity_menu_lateral_home));
         setSupportActionBar(toolbar);
 
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         FragmentManager fragmantManager = getSupportFragmentManager();
         fragmantManager.beginTransaction().replace(R.id.contenedor, new HomeFragment()).commit();
