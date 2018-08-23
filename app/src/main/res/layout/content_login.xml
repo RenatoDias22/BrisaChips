@@ -22,17 +22,13 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/side_nav_bar" />
 
-            <!--<ImageView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:scaleType="fitXY"-->
-                <!--app:srcCompat="@mipmap/logo" />-->
             <ImageView
                 android:id="@+id/imageViewLogin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
+                android:layout_margin="30dp"
                 app:srcCompat="@mipmap/logo" />
 
         </RelativeLayout>
