@@ -42,13 +42,13 @@ public class HomeFragment extends Fragment {
 
         MenuLateralActivity.toolbar.setTitle("Home");
 
-//        FloatingActionButton fab = view.findViewById(R.id.fab_home);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+        FloatingActionButton fab = view.findViewById(R.id.fab_home);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         return view;
 
