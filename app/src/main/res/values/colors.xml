@@ -10,4 +10,6 @@
     <color name="cinzaAppPadrao">#A1A1A1</color>
     <color name="bordas">#B5B5B5</color>
     <color name="logo">#6F6AC0</color>
+    <color name="cancelar">#FF0000</color>
+
 </resources>

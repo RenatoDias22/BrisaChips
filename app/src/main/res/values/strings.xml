@@ -13,5 +13,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_menu_lateral_home">Home</string>
     <string name="title_activity_menu_lateral_regiao">Região</string>
+    <string name="pe_a_j_seu_chip">Peça já seu chip</string>
+    <string name="escolha_a_quantidade">Escolha a quantidade</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="pedir">Pedir</string>
 
 </resources>

@@ -102,4 +102,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+//    "auth":"http://chips.brisanet.net.br/api/auth/","cities":"http://chips.brisanet.net.br/api/cities/","regions":"http://chips.brisanet.net.br/api/regions/","points":"http://chips.brisanet.net.br/api/points/","images":"http://chips.brisanet.net.br/api/images/","orders":"http://chips.brisanet.net.br/api/orders/","ships":"http://chips.brisanet.net.br/api/ships/
+
+    //user_level
+    //super : 0
+    //Lider regional parceiros :1
+    //lider regional interno :2
+    //parceiro
+    //vendendor interno
 }

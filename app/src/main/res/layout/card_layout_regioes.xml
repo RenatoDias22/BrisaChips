@@ -35,10 +35,8 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="Vale do Jaguaribe"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                card_view:fontFamily="@font/bangers" />
+                android:textStyle="bold" />
 
         </LinearLayout>
 
