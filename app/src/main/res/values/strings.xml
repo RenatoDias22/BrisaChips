@@ -17,5 +17,9 @@
     <string name="escolha_a_quantidade">Escolha a quantidade</string>
     <string name="cancelar">Cancelar</string>
     <string name="pedir">Pedir</string>
+    <string name="pedido">PEDIDO</string>
+    <string name="data">DATA</string>
+    <string name="quantidade">QUANTIDADE</string>
+    <string name="status">STATUS</string>
 
 </resources>
