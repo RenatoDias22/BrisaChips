@@ -78,6 +78,26 @@ public class AuthUser {
         public String getEmail() {
             return email;
         }
+
+        public Boolean getHas_password() {
+            return has_password;
+        }
+
+        public Boolean getProfile_photo() {
+            return profile_photo;
+        }
+
+        public String getFacebook_photo_url() {
+            return facebook_photo_url;
+        }
+
+        public Boolean getFacebook_user() {
+            return facebook_user;
+        }
+
+        public String getUser_level() {
+            return user_level;
+        }
     }
 
 }

@@ -27,10 +27,10 @@ public class MenuLateralActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static Toolbar toolbar;
-
-    ActionBarDrawerToggle mDrawerToggle;
-    DrawerLayout drawerLayout;
-    private boolean mToolBarNavigationListenerIsRegistered = false;
+//
+//    ActionBarDrawerToggle mDrawerToggle;
+//    DrawerLayout drawerLayout;
+//    private boolean mToolBarNavigationListenerIsRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +116,5 @@ public class MenuLateralActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
 }

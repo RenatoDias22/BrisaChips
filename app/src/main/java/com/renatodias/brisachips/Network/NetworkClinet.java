@@ -1,58 +1,89 @@
 package com.renatodias.brisachips.Network;
 
+import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
+import com.renatodias.brisachips.Login.Model.AuthUser;
+import com.renatodias.brisachips.Utils.Constantes;
+
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 
 public class NetworkClinet  {
 
-    private static Retrofit networkClinet;
-    public static String token;
-    private static final String BASE_URL = "http://chips.brisanet.net.br/api/";
+    public interface WebServiceAPI {
 
-    public static Retrofit getNetworkClinet() {
-        if (networkClinet == null) {
-            networkClinet = new retrofit2.Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
-        return networkClinet;
+        @FormUrlEncoded
+        @POST("auth/")
+        Call<AuthUser> login(@Field("email") String email,
+                             @Field("password") String password);
+
+        @GET("orders/get_partners_orders/")
+        Call<List<ColaboradorSuper>> getAllPartnersOrders();
+
     }
 
-//    public AuthAPI getAPI() {
-//        Retrofit retrofit = new Retrofit
-//                .Builder()
-//                .baseUrl(BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        return retrofit.create(AuthAPI.class);
-//
-//    }
+    public static WebServiceAPI getNetworkClinet() {
 
-    public NetworkClinet getAPIWithKey() {
+            Retrofit retrofit = new retrofit2.Retrofit
+                    .Builder()
+                    .baseUrl(Constantes.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+        return retrofit.create(WebServiceAPI.class);
+    }
+
+
+    public static WebServiceAPI getAPIWithKey() {
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
         httpClient.addInterceptor(new Interceptor() {
             @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request().newBuilder().addHeader("Authorization", "Token " + token).build();
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request original = chain.request();
+
+                // Request customization: add request headers
+                Request.Builder requestBuilder = original.newBuilder()
+                        .addHeader("Authorization","token " + Constantes.token);
+
+                Request request = requestBuilder.build();
                 return chain.proceed(request);
             }
         });
 
-        Retrofit retrofit = new Retrofit
+//        OkHttpClient client = httpClient.build();
+
+
+//        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+//        httpClient.addInterceptor(new Interceptor() {
+//            @Override
+//            public Response intercept(Chain chain) throws IOException {
+//                Request request = chain.request().newBuilder().addHeader("Authorization", "token " + Constantes.token).build();
+//                return chain.proceed(request);
+//            }
+//        });
+
+        Retrofit retrofit = new retrofit2.Retrofit
                 .Builder()
                 .client(httpClient.build())
-                .baseUrl(BASE_URL)
+                .baseUrl(Constantes.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        return retrofit.create(NetworkClinet.class);
+        return retrofit.create(WebServiceAPI.class);
 
     }
 }
