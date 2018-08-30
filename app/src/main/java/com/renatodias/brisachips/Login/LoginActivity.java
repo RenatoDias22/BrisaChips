@@ -74,9 +74,9 @@ public class LoginActivity extends AppCompatActivity {
         String senha = senhaLogin.getText().toString().trim();
 
         service
-                .getNetworkClinet()
-                .login(email, senha)
-                .enqueue(new Callback<AuthUser>() {
+            .getNetworkClinet()
+            .login(email, senha)
+            .enqueue(new Callback<AuthUser>() {
 
             @Override
             public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {

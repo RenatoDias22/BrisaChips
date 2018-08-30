@@ -17,20 +17,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.renatodias.brisachips.Fragmants.Home.HomeFragment;
 import com.renatodias.brisachips.Fragmants.Regiao.RegioesFragment;
 import com.renatodias.brisachips.Login.LoginActivity;
 import com.renatodias.brisachips.R;
+import com.renatodias.brisachips.Utils.Constantes;
+import com.renatodias.brisachips.Utils.Utils;
 
 public class MenuLateralActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static Toolbar toolbar;
-//
-//    ActionBarDrawerToggle mDrawerToggle;
-//    DrawerLayout drawerLayout;
-//    private boolean mToolBarNavigationListenerIsRegistered = false;
+    NavigationView navigationView;
+    String level = ""+ Constantes.user.getUser_level();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,27 +43,15 @@ public class MenuLateralActivity extends AppCompatActivity
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        FragmentManager fragmantManager = getSupportFragmentManager();
-        fragmantManager.beginTransaction().replace(R.id.contenedor, new HomeFragment()).commit();
+        setFragmentManager();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        setFloatActionButton();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        setDrawerMenu();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        setnavigationViewMenu();
     }
+
 
     @Override
     public void onBackPressed() {
@@ -85,11 +74,6 @@ public class MenuLateralActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-//        if (id == R.id.action_add) {
-//            Intent intent = new Intent(MenuLateralActivity.this, LoginActivity.class);
-//            startActivity(intent);
-//            return true;
-//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -117,4 +101,51 @@ public class MenuLateralActivity extends AppCompatActivity
         return true;
     }
 
+    private void setnavigationViewMenu(){
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+        NavigationView navigationView2 = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView2.getHeaderView(0);
+
+        TextView navUsername = (TextView) headerView.findViewById(R.id.header_menu_name);
+        navUsername.setText(Constantes.user.getName());
+
+        TextView navUserEmail = (TextView) headerView.findViewById(R.id.header_menu_subetexto);
+        navUserEmail.setText(Constantes.user.getEmail());
+
+        if (!Utils.isSuper(level)) {
+            Menu nav_Menu = navigationView.getMenu();
+            nav_Menu.findItem(R.id.nav_list).setVisible(false);
+        }
+
+    }
+
+    private void setDrawerMenu(){
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+
+    private void setFloatActionButton(){
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+    private void setFragmentManager(){
+        FragmentManager fragmantManager = getSupportFragmentManager();
+        fragmantManager.beginTransaction().replace(R.id.contenedor, new HomeFragment()).commit();
+
+    }
 }

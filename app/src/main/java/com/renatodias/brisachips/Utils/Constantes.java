@@ -11,5 +11,6 @@ public class Constantes {
     public static String token;
     public static AuthUser.User user;
     public static List<ColaboradorSuper> colaboradorSuper;
+    public static ColaboradorSuper colaborador;
 
 }

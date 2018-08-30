@@ -16,7 +16,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/peca_chip_item_sub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/escolha_a_quantidade"
@@ -49,7 +49,7 @@
         android:padding="8dp">
 
         <LinearLayout
-            android:id="@+id/containerButton_home_info_dialog"
+            android:id="@+id/layout_button_cancelar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -58,7 +58,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/entrarLogin"
+                android:id="@+id/cancelar_dialog_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/mybutton"
@@ -69,18 +69,18 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/containerButton_home_dialog"
+            android:id="@+id/layout_button_pedir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/containerButton_home_info_dialog"
+            android:layout_toRightOf="@+id/layout_button_cancelar"
             android:foregroundGravity="fill"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/entrarLogin_dialog"
+                android:id="@+id/pedir_dialog_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"

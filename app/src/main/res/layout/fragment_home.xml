@@ -99,6 +99,7 @@
         android:layout_gravity="end|bottom"
         android:src="@drawable/ic_menu_add"
         android:layout_marginBottom="20dp"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginRight="20dp"
+        android:visibility="invisible"/>
 
 </FrameLayout>
