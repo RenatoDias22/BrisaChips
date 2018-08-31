@@ -1,12 +1,10 @@
 package com.renatodias.brisachips.Fragmants.Home;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -14,7 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +22,6 @@ import com.renatodias.brisachips.Fragmants.Home.Adapter.ContentItem;
 import com.renatodias.brisachips.Fragmants.Home.Adapter.Header;
 import com.renatodias.brisachips.Fragmants.Home.Adapter.HomeAdapter;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
-import com.renatodias.brisachips.Login.LoginActivity;
-import com.renatodias.brisachips.Login.Model.AuthUser;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
@@ -36,9 +31,7 @@ import com.renatodias.brisachips.Utils.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,6 +46,8 @@ public class HomeFragment extends Fragment {
 
     View contextView;
 
+    ProgressDialog progressDialog;
+
     String level = ""+ Constantes.user.getUser_level();
 
     @Override
@@ -62,6 +57,8 @@ public class HomeFragment extends Fragment {
         contextView = inflater.inflate(R.layout.fragment_home, container, false);
 
         MenuLateralActivity.toolbar.setTitle("Home");
+
+        setProgressLogin(getActivity());
 
         if (Utils.isSuper(level)) {
             getCitysOrdesSuper();
@@ -76,38 +73,41 @@ public class HomeFragment extends Fragment {
 
     public void getCitysOrdesSuper(){
 
+        progressDialog.show();
+
          service
              .getAPIWithKey()
              .getAllPartnersOrders()
              .enqueue(new Callback<List<ColaboradorSuper>>() {
                 @Override
                 public void onResponse(Call<List<ColaboradorSuper>> call, Response<List<ColaboradorSuper>> response) {
-//                progressDoalog.dismiss();
-//                generateDataList(response.body());
-                List<ColaboradorSuper> result = (List<ColaboradorSuper>) response.body();
 
-                if(result != null) {
+                    List<ColaboradorSuper> result = (List<ColaboradorSuper>) response.body();
 
-                    Constantes.colaboradorSuper = result;
+                    if(result != null) {
 
-                    createRecyclerView();
+                        Constantes.colaboradorSuper = result;
 
+                        createRecyclerView();
+                        progressDialog.dismiss();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<ColaboradorSuper>> call, Throwable t) {
-//                progressDoalog.dismiss();
-                try {
-                    throw  new InterruptedException("Erro na comunicação com o servidor!");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                @Override
+                public void onFailure(Call<List<ColaboradorSuper>> call, Throwable t) {
+                    progressDialog.dismiss();
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
         });
     }
 
     public void getCitysOrdes(){
+
+        progressDialog.show();
 
         service
             .getAPIWithKey()
@@ -115,8 +115,7 @@ public class HomeFragment extends Fragment {
             .enqueue(new Callback<ColaboradorSuper>() {
                 @Override
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
-//                progressDoalog.dismiss();
-//                generateDataList(response.body());
+
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
 
                     if(result != null) {
@@ -125,12 +124,13 @@ public class HomeFragment extends Fragment {
                         createRecyclerView();
                         createFloatingActionButton();
 
+                        progressDialog.dismiss();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
-                    //                progressDoalog.dismiss();
+                    progressDialog.dismiss();
                     try {
                         throw  new InterruptedException("Erro na comunicação com o servidor!");
                     } catch (InterruptedException e) {
@@ -141,26 +141,31 @@ public class HomeFragment extends Fragment {
     }
 
     public void postAskForOrdes(int orderCount, Context context){
+        setProgressLogin(context);
+        progressDialog.show();
 
         HashMap<String, Integer> jsonParams = new HashMap<>();
         jsonParams.put("amount", orderCount);
+
         final Context c = context;
+
         service
             .getAPIWithKey()
             .askForOrdes(jsonParams)
             .enqueue(new Callback<ColaboradorSuper>() {
                 @Override
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
-    //                progressDoalog.dismiss();
-    //                generateDataList(response.body());
+
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
                     createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!", c);
-                    adapter.notifyDataSetChanged();
+
+                    progressDialog.dismiss();
                 }
 
                 @Override
                 public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
-                    //                progressDoalog.dismiss();
+
+                    progressDialog.dismiss();
                     createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", c);
                     try {
                         throw  new InterruptedException("Erro na comunicação com o servidor!");
@@ -172,7 +177,8 @@ public class HomeFragment extends Fragment {
     }
 
     public void postAskForAcceptOrder(int id, Context context){
-
+        setProgressLogin(context);
+        progressDialog.show();
         final Context c = context;
 
         service
@@ -185,12 +191,14 @@ public class HomeFragment extends Fragment {
                     //                generateDataList(response.body());
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
                     createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!",c);
-                    adapter.notifyDataSetChanged();
+
+                    progressDialog.dismiss();
                 }
 
                 @Override
                 public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
-                    //                progressDoalog.dismiss();
+
+                    progressDialog.dismiss();
                     createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", c);
                     try {
                         throw  new InterruptedException("Erro na comunicação com o servidor!");
@@ -386,6 +394,11 @@ public class HomeFragment extends Fragment {
                 dialog.dismiss();
             }
         });
+    }
+
+    private void setProgressLogin(Context context) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Carregando...");
     }
 
 }

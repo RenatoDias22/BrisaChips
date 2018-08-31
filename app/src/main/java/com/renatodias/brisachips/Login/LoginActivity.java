@@ -1,12 +1,19 @@
 package com.renatodias.brisachips.Login;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -25,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     public EditText emailLogin;
     public EditText senhaLogin;
 
+    ProgressDialog progressDialog;
+
     NetworkClinet service;
 
     @Override
@@ -33,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        setProgressLogin();
 
         emailLogin = (EditText) findViewById(R.id.emailLogin);
         senhaLogin = (EditText) findViewById(R.id.senhaLogin);
@@ -64,12 +75,17 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void setProgressLogin() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Carregando...");
+    }
+
     public void clickLoginEntrar(View view) {
         login();
     }
 
     public void login(){
-
+        progressDialog.show();
         String email = emailLogin.getText().toString().trim();
         String senha = senhaLogin.getText().toString().trim();
 
@@ -80,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
-//                progressDoalog.dismiss();
+                progressDialog.dismiss();
 //                generateDataList(response.body());
                 AuthUser result = response.body();
 
@@ -91,12 +107,15 @@ public class LoginActivity extends AppCompatActivity {
                     Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
                     LoginActivity.this.startActivity(mainIntent);
                     LoginActivity.this.finish();
+                }else{
+                    createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
                 }
             }
 
             @Override
             public void onFailure(Call<AuthUser> call, Throwable t) {
-//                progressDoalog.dismiss();
+                progressDialog.dismiss();
+                createAlertViewSucesso("Algo deu errado :(", "Erro na comunicação com o servidor!");
                 try {
                     throw  new InterruptedException("Erro na comunicação com o servidor!");
                 } catch (InterruptedException e) {
@@ -106,12 +125,40 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public void createAlertViewSucesso(String title, String subTitulo){
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewDialog = inflater.inflate(R.layout.dialog_home_pedidos, null);
+
+        TextView titulo = viewDialog.findViewById(R.id.peca_chip_item);
+        titulo.setText(title);
+
+        TextView sub = viewDialog.findViewById(R.id.peca_chip_item_sub);
+        sub.setText(subTitulo);
+
+        TextView edit = viewDialog.findViewById(R.id.quantidade_item_alert);
+        edit.setVisibility(View.INVISIBLE);
+
+        Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
+        pedir.setText("Ok");
+
+        Button cancelar = (Button) viewDialog.findViewById(R.id.cancelar_dialog_button);
+        cancelar.setVisibility(View.INVISIBLE);
+
+        mBuilder.setView(viewDialog);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        pedir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
 //    "auth":"http://chips.brisanet.net.br/api/auth/","cities":"http://chips.brisanet.net.br/api/cities/","regions":"http://chips.brisanet.net.br/api/regions/","points":"http://chips.brisanet.net.br/api/points/","images":"http://chips.brisanet.net.br/api/images/","orders":"http://chips.brisanet.net.br/api/orders/","ships":"http://chips.brisanet.net.br/api/ships/
 
-    //user_level
-    //super : 0
-    //Lider regional parceiros :1
-    //lider regional interno :2
-    //parceiro
-    //vendendor interno
 }
