@@ -1,8 +1,10 @@
 package com.renatodias.brisachips.Fragmants.Home.Adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,9 +28,14 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     View contextView;
 
-
+    Context context;
     List<ColaboradorSuper> list;
     String level = ""+ Constantes.user.getUser_level();
+
+    public HomeAdapter(List<ColaboradorSuper> headerItems, Context context) {
+        this.list = headerItems;
+        context = context;
+    }
 
     public HomeAdapter(List<ColaboradorSuper> headerItems) {
         this.list = headerItems;
@@ -68,7 +75,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ViewHolderHomeHeader) {
 
             Header  currentItem = (Header) list.get(position);
@@ -101,11 +108,13 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                         VHome.status.setText("PENDENTE ");
                         break;
                     case "2":
-                        VHome.status.setText("CANCELADO");
+                        VHome.status.setText("ATENDIDO");
                         break;
                     case "3":
                         VHome.status.setText("RECEBIDO ");
                         break;
+                     default:
+                         VHome.status.setText("CANCELADO");
                 }
 
         }
@@ -145,10 +154,10 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     class ViewHolderHome extends RecyclerView.ViewHolder{
 
-        public TextView pedido;
-        public TextView data;
-        public TextView quantidade;
-        public TextView status;
+        public final TextView pedido;
+        public final TextView data;
+        public final TextView quantidade;
+        public final TextView status;
 
 
         public ViewHolderHome(View itemView) {
@@ -158,12 +167,13 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             data = (TextView) itemView.findViewById(R.id.item_data);
             quantidade = (TextView) itemView.findViewById(R.id.item_qtd);
             status = (TextView) itemView.findViewById(R.id.item_status);
-
+            final Context contextaux = context;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     if(Utils.isSuper(level)){
+                        int id = Integer.parseInt(pedido.getText().toString());
                         HomeFragment f = new HomeFragment();
-                        f.createAlertViewSucesso("Atender Pedido","Deseja atender a esté pedido?");
+                        f.createAlertViewAtender("Atender Pedido","Deseja atender a esté pedido?", id, v.getContext());
                     }
                 }
             });

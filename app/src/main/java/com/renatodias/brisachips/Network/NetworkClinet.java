@@ -43,6 +43,10 @@ public class NetworkClinet  {
         @POST("orders/")
         Call<ColaboradorSuper> askForOrdes(@Body HashMap<String, Integer> body);
 
+        @POST("orders/accept_order/")
+        Call<ColaboradorSuper> askForAcceptOrder(@Body int body);
+
+
     }
 
     public static WebServiceAPI getNetworkClinet() {
@@ -74,18 +78,6 @@ public class NetworkClinet  {
                 return chain.proceed(request);
             }
         });
-
-//        OkHttpClient client = httpClient.build();
-
-
-//        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-//        httpClient.addInterceptor(new Interceptor() {
-//            @Override
-//            public Response intercept(Chain chain) throws IOException {
-//                Request request = chain.request().newBuilder().addHeader("Authorization", "token " + Constantes.token).build();
-//                return chain.proceed(request);
-//            }
-//        });
 
         Retrofit retrofit = new retrofit2.Retrofit
                 .Builder()

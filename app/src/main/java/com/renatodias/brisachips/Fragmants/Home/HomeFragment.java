@@ -1,5 +1,6 @@
 package com.renatodias.brisachips.Fragmants.Home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -139,11 +140,11 @@ public class HomeFragment extends Fragment {
             });
     }
 
-    public void postAskForOrdes(int orderCount){
+    public void postAskForOrdes(int orderCount, Context context){
 
         HashMap<String, Integer> jsonParams = new HashMap<>();
         jsonParams.put("amount", orderCount);
-
+        final Context c = context;
         service
             .getAPIWithKey()
             .askForOrdes(jsonParams)
@@ -153,13 +154,14 @@ public class HomeFragment extends Fragment {
     //                progressDoalog.dismiss();
     //                generateDataList(response.body());
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!");
+                    createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!", c);
+                    adapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
                     //                progressDoalog.dismiss();
-                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!");
+                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", c);
                     try {
                         throw  new InterruptedException("Erro na comunicação com o servidor!");
                     } catch (InterruptedException e) {
@@ -167,6 +169,38 @@ public class HomeFragment extends Fragment {
                     }
                 }
         });
+    }
+
+    public void postAskForAcceptOrder(int id, Context context){
+
+        HashMap<String, Integer> jsonParams = new HashMap<>();
+//        jsonParams.put("id", id);
+        final Context c = context;
+
+        service
+            .getAPIWithKey()
+            .askForAcceptOrder(id)
+            .enqueue(new Callback<ColaboradorSuper>() {
+                @Override
+                public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
+                    //                progressDoalog.dismiss();
+                    //                generateDataList(response.body());
+                    ColaboradorSuper result = (ColaboradorSuper) response.body();
+                    createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!",c);
+//                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
+                    //                progressDoalog.dismiss();
+                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", c);
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
 
@@ -216,12 +250,13 @@ public class HomeFragment extends Fragment {
     public void createRecyclerView(){
 
         final FragmentActivity context = getActivity();
+
         final RecyclerView recyclerView = (RecyclerView) contextView.findViewById(R.id.recycler_view_home);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
 
         if (Utils.isSuper(level)) {
-            adapter = new HomeAdapter(getListCitysOrdes(Constantes.colaboradorSuper));
+            adapter = new HomeAdapter(getListCitysOrdes(Constantes.colaboradorSuper), this.getActivity());
         } else {
             adapter = new HomeAdapter(getListOrdes(Constantes.colaborador));
         }
@@ -236,15 +271,16 @@ public class HomeFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createAlertViewPedido();
+                createAlertViewPedido(view.getContext());
             }
         });
     }
 
-    public void createAlertViewPedido(){
+    public void createAlertViewPedido(Context context){
 
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-        View viewDialog = getLayoutInflater().inflate(R.layout.dialog_home_pedidos, null);
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewDialog = inflater.inflate(R.layout.dialog_home_pedidos, null);
 
         final TextView qtdPedido = (TextView) viewDialog.findViewById(R.id.quantidade_item_alert);
         Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
@@ -259,7 +295,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int orderCount = Integer.parseInt(qtdPedido.getText().toString());
-                postAskForOrdes(orderCount);
+                postAskForOrdes(orderCount, v.getContext());
                 dialog.dismiss();
             }
         });
@@ -272,10 +308,11 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void createAlertViewSucesso(String title, String subTitulo){
+    public void createAlertViewSucesso(String title, String subTitulo, Context context){
 
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-        View viewDialog = getLayoutInflater().inflate(R.layout.dialog_home_pedidos, null);
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewDialog = inflater.inflate(R.layout.dialog_home_pedidos, null);
 
         TextView titulo = viewDialog.findViewById(R.id.peca_chip_item);
         titulo.setText(title);
@@ -305,10 +342,12 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void createAlertViewAtender(String title, String subTitulo){
+    public void createAlertViewAtender(String title, String subTitulo, int id, Context context){
 
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-        View viewDialog = getLayoutInflater().inflate(R.layout.dialog_home_pedidos, null);
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewDialog = inflater.inflate(R.layout.dialog_home_pedidos, null);
 
         TextView titulo = viewDialog.findViewById(R.id.peca_chip_item);
         titulo.setText(title);
@@ -325,8 +364,11 @@ public class HomeFragment extends Fragment {
         Button cancelar = (Button) viewDialog.findViewById(R.id.cancelar_dialog_button);
         cancelar.setText("Recusar");
 
+        final int idClick = id;
+
         mBuilder.setView(viewDialog);
         final AlertDialog dialog = mBuilder.create();
+
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
 
@@ -334,7 +376,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                postAskForAcceptOrder(idClick, v.getContext());
                 dialog.dismiss();
+
             }
         });
 
