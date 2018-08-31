@@ -173,8 +173,6 @@ public class HomeFragment extends Fragment {
 
     public void postAskForAcceptOrder(int id, Context context){
 
-        HashMap<String, Integer> jsonParams = new HashMap<>();
-//        jsonParams.put("id", id);
         final Context c = context;
 
         service
@@ -187,7 +185,7 @@ public class HomeFragment extends Fragment {
                     //                generateDataList(response.body());
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
                     createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!",c);
-//                    adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                 }
 
                 @Override

@@ -113,6 +113,9 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     case "3":
                         VHome.status.setText("RECEBIDO ");
                         break;
+                    case "4":
+                        VHome.status.setText("CANCELADO");
+                        break;
                      default:
                          VHome.status.setText("CANCELADO");
                 }
@@ -170,10 +173,13 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             final Context contextaux = context;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    if(Utils.isSuper(level)){
-                        int id = Integer.parseInt(pedido.getText().toString());
-                        HomeFragment f = new HomeFragment();
-                        f.createAlertViewAtender("Atender Pedido","Deseja atender a esté pedido?", id, v.getContext());
+                    if(Utils.isSuper(level)) {
+                        if (status.getText().toString().equals("PENDENTE ") || status.getText().toString().equals("ATENDIDO")) {
+                            int id = Integer.parseInt(pedido.getText().toString());
+                            HomeFragment f = new HomeFragment();
+                            f.createAlertViewAtender("Atender Pedido", "Deseja atender a esté pedido?", id, v.getContext());
+
+                        }
                     }
                 }
             });
