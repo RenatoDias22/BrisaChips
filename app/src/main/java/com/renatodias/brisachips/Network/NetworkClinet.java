@@ -1,5 +1,6 @@
 package com.renatodias.brisachips.Network;
 
+import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
 import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Login.Model.AuthUser;
@@ -24,6 +25,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.Path;
 
 public class NetworkClinet  {
 
@@ -49,6 +51,12 @@ public class NetworkClinet  {
 
         @GET("regions/")
         Call<List<Regioes>> getAllRegions();
+
+        @GET("regions/{pk}/")
+        Call<List<City>> getAllCitys(@Path(value = "pk", encoded = true) String pk);
+
+        @GET("cities/{pk}/")
+        Call<List<City>> getAllPonts(@Path(value = "pk", encoded = true) String pk);
 
     }
 

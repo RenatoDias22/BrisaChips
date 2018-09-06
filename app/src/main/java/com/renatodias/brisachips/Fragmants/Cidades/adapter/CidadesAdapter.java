@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.renatodias.brisachips.Fragmants.Cidades.CidadesFragment;
+import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Colaboradores.ColaboradoresFragment;
+import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Fragmants.Regiao.adapter.RegiaoAdapter;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.R;
@@ -17,7 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CidadesAdapter extends RecyclerView.Adapter<CidadesAdapter.ViewHolderCidades>{
-    List<String> cidades = new ArrayList<String>();
+
+    List<City> list;
+
+    public CidadesAdapter(List<City> headerItems) {
+        this.list = headerItems;
+    }
 
     class ViewHolderCidades extends RecyclerView.ViewHolder{
 
@@ -49,24 +56,14 @@ public class CidadesAdapter extends RecyclerView.Adapter<CidadesAdapter.ViewHold
     @Override
     public void onBindViewHolder(CidadesAdapter.ViewHolderCidades holder, int position) {
 
-        holder.titulo.setText(cidades.get(position));
+        holder.titulo.setText(list.get(position).getName());
 
     }
 
     @Override
     public int getItemCount() {
-        cidades.clear();
-        cidades.add("Pereiro");
-        cidades.add("Jaguaribe");
-        cidades.add("Fortaleza");
-        cidades.add("Limoeiro do Norte");
-        cidades.add("Morada Nova");
-        cidades.add("Juazeiro do Norte");
-        cidades.add("São Miguel");
-        cidades.add("Pau dos Ferros");
-        cidades.add("Beberibe");
-        cidades.add("Russas");
 
-        return cidades.size();
+
+        return list.size();
     }
 }

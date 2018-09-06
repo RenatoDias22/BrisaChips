@@ -31,8 +31,9 @@ public class RegiaoAdapter extends RecyclerView.Adapter<RegiaoAdapter.ViewHolder
 
     class ViewHolderRegioes extends RecyclerView.ViewHolder{
 
-        public TextView titulo;
-
+        public final TextView titulo;
+        public int user;
+        public long id;
 
         public ViewHolderRegioes(View itemView) {
             super(itemView);
@@ -41,6 +42,7 @@ public class RegiaoAdapter extends RecyclerView.Adapter<RegiaoAdapter.ViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     MenuLateralActivity activity = (MenuLateralActivity) v.getContext();
+                    Constantes.url_id_cidade = "" + id;
                     Fragment cidadesFragment = new CidadesFragment();
                     activity.getSupportFragmentManager().beginTransaction().replace(R.id.contenedor, cidadesFragment).addToBackStack(null).commit();
                 }
@@ -60,7 +62,8 @@ public class RegiaoAdapter extends RecyclerView.Adapter<RegiaoAdapter.ViewHolder
     public void onBindViewHolder(ViewHolderRegioes holder, int position) {
 
         holder.titulo.setText(list.get(position).getName());
-
+        holder.id = list.get(position).getId();
+        holder.user = list.get(position).getUser();
     }
 
     @Override
