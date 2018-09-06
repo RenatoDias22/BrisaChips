@@ -6,23 +6,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
+import com.renatodias.brisachips.Fragmants.Colaboradores.Model.Ponts;
 import com.renatodias.brisachips.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ColaboradorAdapter extends RecyclerView.Adapter<ColaboradorAdapter.ViewHolderColaborador>{
-//    List<Colaborador> colaboradores = new ArrayList<Colaborador>();
+
+    List<Ponts> list;
+
+    public ColaboradorAdapter(List<Ponts> headerItems) {
+        this.list = headerItems;
+    }
 
     class ViewHolderColaborador extends RecyclerView.ViewHolder{
 
-//        public TextView titulo;
+        public final TextView titulo;
+        public long id;
 //        public TextView quantidade;
 //        public TextView estoque;
 
         public ViewHolderColaborador(View itemView) {
             super(itemView);
-//            titulo = (TextView) itemView.findViewById(R.id.item_name_colaborador);
+            titulo = (TextView) itemView.findViewById(R.id.item_name_colaborador);
 //            estoque = (TextView) itemView.findViewById(R.id.item_estoque_colaborador);
 //            quantidade = (TextView) itemView.findViewById(R.id.item_qtd_colaborador);
 
@@ -45,7 +53,8 @@ public class ColaboradorAdapter extends RecyclerView.Adapter<ColaboradorAdapter.
     @Override
     public void onBindViewHolder(ColaboradorAdapter.ViewHolderColaborador holder, int position) {
 
-//        holder.titulo.setText(colaboradores.get(position).getNome());
+        holder.titulo.setText(list.get(position).getName());
+        holder.id = list.get(position).getId();
 //        holder.estoque.setText(colaboradores.get(position).getEstoque());
 //        holder.quantidade.setText(colaboradores.get(position).getQuantidade());
 
@@ -53,22 +62,7 @@ public class ColaboradorAdapter extends RecyclerView.Adapter<ColaboradorAdapter.
 
     @Override
     public int getItemCount() {
-//        colaboradores.clear();
-//        colaboradores.add(new Colaborador(1, "João", 0, "Estoque", "16"));
-//        colaboradores.add(new Colaborador(1, "Zé", 0, "Estoque", "13"));
-//        colaboradores.add(new Colaborador(1, "Joaqui", 0, "Estoque", "6"));
-//        colaboradores.add(new Colaborador(1, "Marcos", 0, "Estoque", "14"));
-//        colaboradores.add(new Colaborador(1, "Neto", 0, "Estoque", "25"));
-//        colaboradores.add(new Colaborador(1, "Roberto", 0, "Estoque", "20"));
-//        colaboradores.add(new Colaborador(1, "Romario", 0, "Estoque", "56"));
-//        colaboradores.add(new Colaborador(1, "Joaci", 0, "Estoque", "0"));
-//        colaboradores.add(new Colaborador(1, "Maranhão", 0, "Estoque", "3"));
-//        colaboradores.add(new Colaborador(1, "Humbira", 0, "Estoque", "98"));
-//        colaboradores.add(new Colaborador(1, "Carlos", 0, "Estoque", "20"));
-//        colaboradores.add(new Colaborador(1, "Jordão", 0, "Estoque", "10"));
-//        colaboradores.add(new Colaborador(1, "Caicão", 0, "Estoque", "15"));
-//        colaboradores.add(new Colaborador(1, "Josué", 0, "Estoque", "90"));
 
-        return 10;//colaboradores.size();
+        return list.size();
     }
 }

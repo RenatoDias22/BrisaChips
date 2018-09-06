@@ -14,6 +14,7 @@ import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Fragmants.Regiao.adapter.RegiaoAdapter;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.R;
+import com.renatodias.brisachips.Utils.Constantes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class CidadesAdapter extends RecyclerView.Adapter<CidadesAdapter.ViewHold
     class ViewHolderCidades extends RecyclerView.ViewHolder{
 
         public TextView titulo;
+        public long id;
 
 
         public ViewHolderCidades(View itemView) {
@@ -38,6 +40,7 @@ public class CidadesAdapter extends RecyclerView.Adapter<CidadesAdapter.ViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     MenuLateralActivity activity = (MenuLateralActivity) v.getContext();
+                    Constantes.url_id_pontos_colaborador = "" + id;
                     Fragment colaboradorFragment = new ColaboradoresFragment();
                     activity.getSupportFragmentManager().beginTransaction().replace(R.id.contenedor, colaboradorFragment).addToBackStack(null).commit();
                 }
@@ -57,6 +60,7 @@ public class CidadesAdapter extends RecyclerView.Adapter<CidadesAdapter.ViewHold
     public void onBindViewHolder(CidadesAdapter.ViewHolderCidades holder, int position) {
 
         holder.titulo.setText(list.get(position).getName());
+        holder.id = list.get(position).getId();
 
     }
 

@@ -1,6 +1,7 @@
 package com.renatodias.brisachips.Network;
 
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
+import com.renatodias.brisachips.Fragmants.Colaboradores.Model.Ponts;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
 import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Login.Model.AuthUser;
@@ -56,7 +57,7 @@ public class NetworkClinet  {
         Call<List<City>> getAllCitys(@Path(value = "pk", encoded = true) String pk);
 
         @GET("cities/{pk}/")
-        Call<List<City>> getAllPonts(@Path(value = "pk", encoded = true) String pk);
+        Call<List<Ponts>> getAllPonts(@Path(value = "pk", encoded = true) String pk);
 
     }
 
