@@ -1,6 +1,7 @@
 package com.renatodias.brisachips.Network;
 
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
+import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Login.Model.AuthUser;
 import com.renatodias.brisachips.Utils.Constantes;
 
@@ -46,6 +47,8 @@ public class NetworkClinet  {
         @POST("orders/accept_order/")
         Call<ColaboradorSuper> askForAcceptOrder(@Body int body);
 
+        @GET("regions/")
+        Call<List<Regioes>> getAllRegions();
 
     }
 

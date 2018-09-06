@@ -1,5 +1,6 @@
 package com.renatodias.brisachips.Fragmants.Regiao.adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,14 +11,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.renatodias.brisachips.Fragmants.Cidades.CidadesFragment;
+import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
+import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.R;
+import com.renatodias.brisachips.Utils.Constantes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RegiaoAdapter extends RecyclerView.Adapter<RegiaoAdapter.ViewHolderRegioes>{
-    List<String> regioes = new ArrayList<String>();
+
+    List<Regioes> list;
+    String level = ""+ Constantes.user.getUser_level();
+
+    public RegiaoAdapter(List<Regioes> headerItems) {
+        this.list = headerItems;
+    }
 
     class ViewHolderRegioes extends RecyclerView.ViewHolder{
 
@@ -49,28 +59,12 @@ public class RegiaoAdapter extends RecyclerView.Adapter<RegiaoAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolderRegioes holder, int position) {
 
-        holder.titulo.setText(regioes.get(position));
+        holder.titulo.setText(list.get(position).getName());
 
     }
 
     @Override
     public int getItemCount() {
-        regioes.clear();
-        regioes.add("Cariri");
-        regioes.add("Centro Sul");
-        regioes.add("Grande Fortaleza");
-        regioes.add("Litoral Leste");
-        regioes.add("Litoral Norte");
-        regioes.add("Litoral Oeste / Vale do Curu");
-        regioes.add("Maciço de Baturite");
-        regioes.add("Serra da Ibiapaba");
-        regioes.add("Sertão Central");
-        regioes.add("Sertão de Canidé");
-        regioes.add("Sertão Crateús");
-        regioes.add("Sertão Dos Inhamuns");
-        regioes.add("Sertão de Sobral");
-        regioes.add("Vale Jaguaribe");
-
-        return regioes.size();
+        return list.size();
     }
 }
