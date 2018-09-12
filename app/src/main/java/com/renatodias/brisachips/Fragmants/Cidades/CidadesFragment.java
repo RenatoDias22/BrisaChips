@@ -50,6 +50,7 @@ public class CidadesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_cidades, container, false);
+
         final FragmentActivity context = getActivity();
 
         setToolbar();

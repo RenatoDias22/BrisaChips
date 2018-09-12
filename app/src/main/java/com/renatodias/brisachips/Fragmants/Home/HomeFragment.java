@@ -62,12 +62,18 @@ public class HomeFragment extends Fragment {
 
         setProgressLogin(getActivity());
 
-        if (Utils.isSuper(level)) {
-            getCitysOrdesSuper(false, null);
-        } else {
-            getCitysOrdes(false);
-            createFloatingActionButton();
-        }
+//        if(Constantes.id_pontos_colaborador != ""){
+//            getCitysOrdesColaborador(false);
+//            createFloatingActionButton();
+//        } else {
+
+            if (Utils.isSuper(level)) {
+                getCitysOrdesSuper(false, null);
+            } else {
+                getCitysOrdes(false);
+                createFloatingActionButton();
+            }
+//        }
 
         return contextView;
 
@@ -110,6 +116,50 @@ public class HomeFragment extends Fragment {
                 }
         });
     }
+
+
+//    public void getCitysOrdesColaborador(final boolean atualization){
+//
+//        progressDialog.show();
+//
+////        int id = Integer.parseInt(Constantes.id_pontos_colaborador);
+//
+//        HashMap<String, Integer> jsonParams = new HashMap<>();
+////        jsonParams.put("id", id);
+//
+//        service
+//            .getAPIWithKey()
+//            .getOrdesColaborador(jsonParams)
+//            .enqueue(new Callback<ColaboradorSuper>() {
+//                @Override
+//                public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
+//
+//                    ColaboradorSuper result = (ColaboradorSuper) response.body();
+//
+//                    if(result != null) {
+//
+//                        Constantes.colaborador = result;
+//                        if (!atualization)
+//                            createRecyclerView();
+//                        else
+//                            loadRecycleViewCitysColaborador();
+//
+//                        progressDialog.dismiss();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
+//                    progressDialog.dismiss();
+//                    try {
+//                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//    }
+
 
     public void getCitysOrdes(final boolean atualization){
 
@@ -167,6 +217,11 @@ public class HomeFragment extends Fragment {
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
                     if (result.getMessage() != "") {
                         getCitysOrdes(true);
+//                        if(Constantes.id_pontos_colaborador != "") {
+//                            getCitysOrdesColaborador(true);
+//                        }else{
+//                            getCitysOrdes(true);
+//                        }
                         createAlertViewSucesso("Sucesso!", result.getMessage(), c);
                         progressDialog.dismiss();
                     }else{
@@ -237,6 +292,12 @@ public class HomeFragment extends Fragment {
             adapter.notifyDataSetChanged();
         }
     }
+
+//    public void loadRecycleViewCitysColaborador(){
+//
+//        adapter.setItems(getListOrdes(Constantes.colaborador), getActivity());
+//        adapter.notifyDataSetChanged();
+//    }
 
     private List<ColaboradorSuper> getListCitysOrdes(List<ColaboradorSuper> arrayList) {
 

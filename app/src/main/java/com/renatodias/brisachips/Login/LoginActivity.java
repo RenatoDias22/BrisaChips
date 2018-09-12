@@ -51,12 +51,14 @@ public class LoginActivity extends AppCompatActivity {
         emailLogin.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_NULL
-                        && event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     String cap = emailLogin.getText().toString().replace('\n', ' ')
                             .trim();
                     emailLogin.setText(cap);
-                    senhaLogin.requestFocus();//match this behavior to your 'Send' (or Confirm) button
+                    senhaLogin.requestFocus();
                 }
                 return false;
             }

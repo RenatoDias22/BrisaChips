@@ -47,6 +47,9 @@ public class NetworkClinet  {
         @POST("orders/")
         Call<ColaboradorSuper> askForOrdes(@Body HashMap<String, Integer> body);
 
+        @POST("orders/get_orders/")
+        Call<ColaboradorSuper> getOrdesColaborador(@Body HashMap<String, Integer> body);
+
         @POST("orders/accept_order/")
         Call<ColaboradorSuper> askForAcceptOrder(@Body int body);
 

@@ -6,9 +6,235 @@
     tools:context=".Fragmants.Cadastro.CadastrarColaboradorFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relativeTopLogin">
+
+            <EditText
+                android:id="@+id/nome_empresa"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:hint="Nome da Empresa"
+                android:imeOptions="actionDone"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/nome_fantasia"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nome_empresa"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Nome Fantasia"
+                android:imeOptions="actionNext"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/nome_cpf_cnpj"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nome_fantasia"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="CPF/CNPJ"
+                android:imeOptions="actionNext"
+                android:inputType="phone"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/nome_incricao_estadual"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nome_cpf_cnpj"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Incrição Estadual"
+                android:imeOptions="actionNext"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/nome_incricao_municial"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nome_incricao_estadual"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Incrição Municipal"
+                android:imeOptions="actionNext"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/nome_telefone_1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nome_incricao_municial"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Telefone 1"
+                android:imeOptions="actionNext"
+                android:inputType="phone"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/nome_telefone_2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nome_telefone_1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Telefone 2"
+                android:imeOptions="actionNext"
+                android:inputType="phone"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/email_cadastro"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nome_telefone_2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="E-mail"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/cidade_cadastro"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/email_cadastro"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Cidade"
+                android:imeOptions="actionNext"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/bairro_cadastro"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cidade_cadastro"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Bairro"
+                android:imeOptions="actionNext"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/endereco_cadastro"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bairro_cadastro"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Endereço"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/endereco_cadastro"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:text="Interno" />
+
+            <Button
+                android:id="@+id/button_cadastro"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/switch1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/mybutton"
+                android:backgroundTint="@color/logo"
+                android:text="Cadastrar"
+                android:textColor="@color/branco" />
+
+            />
+        </RelativeLayout>
+
+    </ScrollView>
 
 </FrameLayout>
