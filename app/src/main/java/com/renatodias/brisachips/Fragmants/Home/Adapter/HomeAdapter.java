@@ -26,22 +26,27 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    View contextView;
-
     Context context;
+    HomeAdapter adapter;
     List<ColaboradorSuper> list;
     String level = ""+ Constantes.user.getUser_level();
 
     public HomeAdapter(List<ColaboradorSuper> headerItems, Context context) {
         this.list = headerItems;
-        context = context;
+        this.context = context;
     }
 
     public HomeAdapter(List<ColaboradorSuper> headerItems) {
         this.list = headerItems;
     }
 
-
+    public void setItems(List<ColaboradorSuper> persons, Context context) {
+        this.list = persons;
+        this.context = context;
+    }
+    public void setAdapter(HomeAdapter adapter) {
+        this.adapter = adapter;
+    }
 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
@@ -171,13 +176,14 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             quantidade = (TextView) itemView.findViewById(R.id.item_qtd);
             status = (TextView) itemView.findViewById(R.id.item_status);
             final Context contextaux = context;
+            final HomeAdapter adapteraux = adapter;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     if(Utils.isSuper(level)) {
                         if (status.getText().toString().equals("PENDENTE ") || status.getText().toString().equals("ATENDIDO")) {
                             int id = Integer.parseInt(pedido.getText().toString());
                             HomeFragment f = new HomeFragment();
-                            f.createAlertViewAtender("Atender Pedido", "Deseja atender a esté pedido?", id, v.getContext());
+                            f.createAlertViewAtender("Atender Pedido", "Deseja atender a esté pedido?", id, v.getContext(), adapteraux);
 
                         }
                     }

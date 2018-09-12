@@ -40,7 +40,7 @@ import retrofit2.Response;
 public class HomeFragment extends Fragment {
 
     Toolbar toolbar;
-    RecyclerView.Adapter adapter;
+    HomeAdapter adapter;
 
     NetworkClinet service;
 
@@ -61,9 +61,9 @@ public class HomeFragment extends Fragment {
         setProgressLogin(getActivity());
 
         if (Utils.isSuper(level)) {
-            getCitysOrdesSuper();
+            getCitysOrdesSuper(false, null);
         } else {
-            getCitysOrdes();
+            getCitysOrdes(false);
         }
 
         return contextView;
@@ -71,9 +71,10 @@ public class HomeFragment extends Fragment {
     }
 
 
-    public void getCitysOrdesSuper(){
+    public void getCitysOrdesSuper(final boolean atualization, HomeAdapter adapterAux){
 
         progressDialog.show();
+        final HomeAdapter adapterAux2 = adapterAux;
 
          service
              .getAPIWithKey()
@@ -87,8 +88,10 @@ public class HomeFragment extends Fragment {
                     if(result != null) {
 
                         Constantes.colaboradorSuper = result;
-
-                        createRecyclerView();
+                        if (!atualization)
+                            createRecyclerView();
+                        else
+                            loadRecycleViewCitys(adapterAux2);
                         progressDialog.dismiss();
                     }
                 }
@@ -105,7 +108,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void getCitysOrdes(){
+    public void getCitysOrdes(final boolean atualization){
 
         progressDialog.show();
 
@@ -121,7 +124,10 @@ public class HomeFragment extends Fragment {
                     if(result != null) {
 
                         Constantes.colaborador = result;
-                        createRecyclerView();
+                        if (!atualization)
+                            createRecyclerView();
+                        else
+                            loadRecycleViewCitys(null);
                         createFloatingActionButton();
 
                         progressDialog.dismiss();
@@ -157,9 +163,13 @@ public class HomeFragment extends Fragment {
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!", c);
-
-                    progressDialog.dismiss();
+                    if (result.getMessage() != "") {
+                        getCitysOrdes(true);
+                        createAlertViewSucesso("Sucesso!", result.getMessage(), c);
+                        progressDialog.dismiss();
+                    }else{
+                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", c);
+                    }
                 }
 
                 @Override
@@ -176,10 +186,11 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void postAskForAcceptOrder(int id, Context context){
+    public void postAskForAcceptOrder(int id, Context context, HomeAdapter adapteraux2){
         setProgressLogin(context);
         progressDialog.show();
         final Context c = context;
+        final HomeAdapter adapteraux = adapteraux2;
 
         service
             .getAPIWithKey()
@@ -187,12 +198,16 @@ public class HomeFragment extends Fragment {
             .enqueue(new Callback<ColaboradorSuper>() {
                 @Override
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
-                    //                progressDoalog.dismiss();
-                    //                generateDataList(response.body());
-                    ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    createAlertViewSucesso("Sucesso!","Seu pedido foi realizado com sucesso!",c);
 
-                    progressDialog.dismiss();
+                    ColaboradorSuper result = (ColaboradorSuper) response.body();
+
+                    if (result.getMessage() != "") {
+                        getCitysOrdesSuper(true, adapteraux);
+                        createAlertViewSucesso("Sucesso!", result.getMessage(), c);
+                        progressDialog.dismiss();
+                    }else{
+                        createAlertViewSucesso("Ops!", "Seu atendimento falhou, tente novamente!", c);
+                    }
                 }
 
                 @Override
@@ -209,6 +224,17 @@ public class HomeFragment extends Fragment {
             });
     }
 
+    public void loadRecycleViewCitys(HomeAdapter adapterAux2){
+
+        if (Utils.isSuper(level)) {
+            adapterAux2.setItems(getListCitysOrdes(Constantes.colaboradorSuper), getActivity());
+            adapterAux2.setAdapter(adapterAux2);
+            adapterAux2.notifyDataSetChanged();
+        } else {
+            adapter.setItems(getListOrdes(Constantes.colaborador), getActivity());
+            adapter.notifyDataSetChanged();
+        }
+    }
 
     private List<ColaboradorSuper> getListCitysOrdes(List<ColaboradorSuper> arrayList) {
 
@@ -263,6 +289,7 @@ public class HomeFragment extends Fragment {
 
         if (Utils.isSuper(level)) {
             adapter = new HomeAdapter(getListCitysOrdes(Constantes.colaboradorSuper), this.getActivity());
+            adapter.setAdapter(adapter);
         } else {
             adapter = new HomeAdapter(getListOrdes(Constantes.colaborador));
         }
@@ -348,7 +375,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void createAlertViewAtender(String title, String subTitulo, int id, Context context){
+    public void createAlertViewAtender(String title, String subTitulo, int id, Context context, HomeAdapter adapteraux){
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
 
@@ -371,6 +398,7 @@ public class HomeFragment extends Fragment {
         cancelar.setText("Recusar");
 
         final int idClick = id;
+        final HomeAdapter adapteraux2 = adapteraux;
 
         mBuilder.setView(viewDialog);
         final AlertDialog dialog = mBuilder.create();
@@ -382,7 +410,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                postAskForAcceptOrder(idClick, v.getContext());
+                postAskForAcceptOrder(idClick, v.getContext(), adapteraux2);
                 dialog.dismiss();
 
             }
