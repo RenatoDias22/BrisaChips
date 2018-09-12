@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import com.renatodias.brisachips.Fragmants.Home.Adapter.HomeAdapter;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
 import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Fragmants.Regiao.adapter.RegiaoAdapter;
+import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
@@ -39,7 +42,13 @@ public class RegioesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_regioes, container, false);
-//        final FragmentActivity context = getActivity();
+
+        MenuLateralActivity.toolbar.setTitle("Região");
+        MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                getActivity(), MenuLateralActivity.drawer, MenuLateralActivity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        MenuLateralActivity.drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
         setProgressLogin(getActivity());
         getRegioes();

@@ -51,6 +51,13 @@ public class CidadesFragment extends Fragment {
         final FragmentActivity context = getActivity();
 
         MenuLateralActivity.toolbar.setTitle("Cidades");
+        MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
+        MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().popBackStack();
+            }
+        });
 
         setProgressLogin(getActivity());
         getCitys();

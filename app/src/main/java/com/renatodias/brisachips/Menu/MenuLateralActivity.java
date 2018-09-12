@@ -30,7 +30,7 @@ public class MenuLateralActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static Toolbar toolbar;
-    NavigationView navigationView;
+    public static DrawerLayout drawer;
     String level = ""+ Constantes.user.getUser_level();
 
     @Override
@@ -124,7 +124,7 @@ public class MenuLateralActivity extends AppCompatActivity
     }
 
     private void setDrawerMenu(){
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
