@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.renatodias.brisachips.Fragmants.Cadastro.CadastrarColaboradorFragment;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Cidades.adapter.CidadesAdapter;
 import com.renatodias.brisachips.Fragmants.Home.HomeFragment;
@@ -50,14 +52,9 @@ public class CidadesFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_cidades, container, false);
         final FragmentActivity context = getActivity();
 
-        MenuLateralActivity.toolbar.setTitle("Cidades");
-        MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
-        MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getFragmentManager().popBackStack();
-            }
-        });
+        setToolbar();
+
+        Constantes.isFragmentRegiao = false;
 
         setProgressLogin(getActivity());
         getCitys();
@@ -82,7 +79,7 @@ public class CidadesFragment extends Fragment {
 
                         Constantes.citys = result;
                         createRecyclerView();
-//                                createFloatingActionButton();
+                        createFloatingActionButton();
 
                         progressDialog.dismiss();
                     }
@@ -113,6 +110,31 @@ public class CidadesFragment extends Fragment {
 
     }
 
+    public void createFloatingActionButton(){
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_cidade);
+        fab.setVisibility(View.VISIBLE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MenuLateralActivity activity = (MenuLateralActivity) view.getContext();
+                Fragment cadastrarColaboradorFragment = new CadastrarColaboradorFragment();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.contenedor, cadastrarColaboradorFragment).addToBackStack(null).commit();
+
+            }
+        });
+    }
+
+    public void setToolbar(){
+
+        MenuLateralActivity.toolbar.setTitle("Cidades");
+        MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
+        MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().popBackStack();
+            }
+        });
+    }
 
     private void setProgressLogin(Context context) {
         progressDialog = new ProgressDialog(context);

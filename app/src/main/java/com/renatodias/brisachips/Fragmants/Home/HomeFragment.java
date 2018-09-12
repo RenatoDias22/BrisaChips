@@ -58,6 +58,8 @@ public class HomeFragment extends Fragment {
 
         MenuLateralActivity.toolbar.setTitle("Home");
 
+        Constantes.isFragmentRegiao = false;
+
         setProgressLogin(getActivity());
 
         if (Utils.isSuper(level)) {

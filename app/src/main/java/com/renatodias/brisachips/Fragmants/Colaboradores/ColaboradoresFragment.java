@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.renatodias.brisachips.Fragmants.Cadastro.CadastrarColaboradorFragment;
 import com.renatodias.brisachips.Fragmants.Cidades.CidadesFragment;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Cidades.adapter.CidadesAdapter;
@@ -47,15 +48,8 @@ public class ColaboradoresFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_colaboradores, container, false);
 
-        MenuLateralActivity.toolbar.setTitle("Colaboradores");
-
-        FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+        setToolbar();
+        Constantes.isFragmentRegiao = false;
 
         setProgressLogin(getActivity());
         getColaboradores();
@@ -68,34 +62,47 @@ public class ColaboradoresFragment extends Fragment {
         progressDialog.show();
 
         service
-                .getAPIWithKey()
-                .getAllPonts(Constantes.url_id_pontos_colaborador)
-                .enqueue(new Callback<List<Ponts>>() {
-                    @Override
-                    public void onResponse(Call<List<Ponts>> call, Response<List<Ponts>> response) {
+            .getAPIWithKey()
+            .getAllPonts(Constantes.url_id_pontos_colaborador)
+            .enqueue(new Callback<List<Ponts>>() {
+                @Override
+                public void onResponse(Call<List<Ponts>> call, Response<List<Ponts>> response) {
 
-                        List<Ponts> result = response.body();
+                    List<Ponts> result = response.body();
 
-                        if(result != null) {
+                    if(result != null) {
 
-                            Constantes.ponts = result;
-                            createRecyclerView();
-//                                createFloatingActionButton();
-
-                            progressDialog.dismiss();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Ponts>> call, Throwable t) {
+                        Constantes.ponts = result;
+                        createRecyclerView();
+                        createFloatingActionButton();
                         progressDialog.dismiss();
-                        try {
-                            throw  new InterruptedException("Erro na comunicação com o servidor!");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }
-                });
+                }
+
+                @Override
+                public void onFailure(Call<List<Ponts>> call, Throwable t) {
+                    progressDialog.dismiss();
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
+
+    private void createFloatingActionButton() {
+
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_colaborador);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MenuLateralActivity activity = (MenuLateralActivity) view.getContext();
+                Fragment cadastrarColaboradorFragment = new CadastrarColaboradorFragment();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.contenedor, cadastrarColaboradorFragment).addToBackStack(null).commit();
+
+            }
+        });
     }
 
     public void createRecyclerView(){
@@ -108,6 +115,10 @@ public class ColaboradoresFragment extends Fragment {
         adapter = new ColaboradorAdapter(Constantes.ponts);
         recyclerView.setAdapter(adapter);
 
+    }
+
+    public void setToolbar(){
+        MenuLateralActivity.toolbar.setTitle("Ponto de Venda");
     }
 
 

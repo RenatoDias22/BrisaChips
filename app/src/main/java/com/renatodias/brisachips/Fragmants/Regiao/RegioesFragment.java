@@ -3,6 +3,7 @@ package com.renatodias.brisachips.Fragmants.Regiao;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.renatodias.brisachips.Fragmants.Cadastro.CadastrarColaboradorFragment;
+import com.renatodias.brisachips.Fragmants.Cidades.CidadesFragment;
 import com.renatodias.brisachips.Fragmants.Home.Adapter.HomeAdapter;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
 import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
@@ -43,12 +46,9 @@ public class RegioesFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_regioes, container, false);
 
-        MenuLateralActivity.toolbar.setTitle("Região");
-        MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), MenuLateralActivity.drawer, MenuLateralActivity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        MenuLateralActivity.drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        setToolbar();
+
+        Constantes.isFragmentRegiao = true;
 
         setProgressLogin(getActivity());
         getRegioes();
@@ -62,46 +62,54 @@ public class RegioesFragment extends Fragment {
             progressDialog.show();
 
             service
-                    .getAPIWithKey()
-                    .getAllRegions()
-                    .enqueue(new Callback<List<Regioes>>() {
-                        @Override
-                        public void onResponse(Call<List<Regioes>> call, Response<List<Regioes>> response) {
+                .getAPIWithKey()
+                .getAllRegions()
+                .enqueue(new Callback<List<Regioes>>() {
+                    @Override
+                    public void onResponse(Call<List<Regioes>> call, Response<List<Regioes>> response) {
 
-                            List<Regioes> result = response.body();
+                        List<Regioes> result = response.body();
 
-                            if(result != null) {
+                        if(result != null) {
 
-                                Constantes.regioes = result;
-                                createRecyclerView();
-//                                createFloatingActionButton();
-
-                                progressDialog.dismiss();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<Regioes>> call, Throwable t) {
+                            Constantes.regioes = result;
+                            createRecyclerView();
+                            createFloatingActionButton();
                             progressDialog.dismiss();
-                            try {
-                                throw  new InterruptedException("Erro na comunicação com o servidor!");
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                         }
-                    });
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Regioes>> call, Throwable t) {
+                        progressDialog.dismiss();
+                        try {
+                            throw  new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
         }
 
 
     }
 
+    private void createFloatingActionButton() {
+
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_regiao);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MenuLateralActivity activity = (MenuLateralActivity) view.getContext();
+                Fragment cadastrarColaboradorFragment = new CadastrarColaboradorFragment();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.contenedor, cadastrarColaboradorFragment).addToBackStack(null).commit();
+            }
+        });
+    }
+
     public void createRecyclerView(){
 
         final FragmentActivity context = getActivity();
-
-//        final RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view_home);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-//        recyclerView.setLayoutManager(layoutManager);
 
         final RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view_regioes);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -110,15 +118,17 @@ public class RegioesFragment extends Fragment {
         adapter = new RegiaoAdapter(Constantes.regioes);
         recyclerView.setAdapter(adapter);
 
-//        if (Utils.isSuper(level)) {
-//            adapter = new RegiaoAdapter(Constantes.regioes);
-//        } else {
-//            adapter = new HomeAdapter(getListOrdes(Constantes.colaborador));
-//        }
-
-        recyclerView.setAdapter(adapter);
     }
 
+    public void setToolbar(){
+
+        MenuLateralActivity.toolbar.setTitle("Região");
+        MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                getActivity(), MenuLateralActivity.drawer, MenuLateralActivity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        MenuLateralActivity.drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
 
     private void setProgressLogin(Context context) {
         progressDialog = new ProgressDialog(context);

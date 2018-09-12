@@ -14,6 +14,7 @@ public class Constantes {
     public static String url_id_cidade = "";
     public static String url_id_pontos_colaborador = "";
     public static String token;
+    public static boolean isFragmentRegiao;
     public static AuthUser.User user;
     public static List<ColaboradorSuper> colaboradorSuper;
     public static ColaboradorSuper colaborador;
