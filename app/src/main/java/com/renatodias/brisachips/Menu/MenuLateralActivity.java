@@ -90,6 +90,9 @@ public class MenuLateralActivity extends AppCompatActivity
         } else if (id == R.id.nav_list) {
             fragmantManager.beginTransaction().replace(R.id.contenedor, new RegioesFragment()).commit();
             toolbar.setTitle(getString(R.string.title_activity_menu_lateral_regiao));
+        } else if (id == R.id.nav_map) {
+            fragmantManager.beginTransaction().replace(R.id.contenedor, new RegioesFragment()).commit();
+            toolbar.setTitle(getString(R.string.title_activity_menu_lateral_regiao));
         } else if (id == R.id.nav_back) {
             Intent mainIntent = new Intent(MenuLateralActivity.this,LoginActivity.class);
             MenuLateralActivity.this.startActivity(mainIntent);
@@ -119,6 +122,7 @@ public class MenuLateralActivity extends AppCompatActivity
         if (!Utils.isSuper(level)) {
             Menu nav_Menu = navigationView.getMenu();
             nav_Menu.findItem(R.id.nav_list).setVisible(false);
+            nav_Menu.findItem(R.id.nav_map).setVisible(false);
         }
 
     }

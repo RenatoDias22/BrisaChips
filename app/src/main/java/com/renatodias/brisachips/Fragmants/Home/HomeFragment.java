@@ -66,6 +66,7 @@ public class HomeFragment extends Fragment {
             getCitysOrdesSuper(false, null);
         } else {
             getCitysOrdes(false);
+            createFloatingActionButton();
         }
 
         return contextView;
@@ -130,7 +131,6 @@ public class HomeFragment extends Fragment {
                             createRecyclerView();
                         else
                             loadRecycleViewCitys(null);
-                        createFloatingActionButton();
 
                         progressDialog.dismiss();
                     }

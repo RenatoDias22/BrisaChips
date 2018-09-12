@@ -56,6 +56,8 @@ public class CidadesFragment extends Fragment {
 
         Constantes.isFragmentRegiao = false;
 
+        createFloatingActionButton(view);
+
         setProgressLogin(getActivity());
         getCitys();
 
@@ -79,7 +81,6 @@ public class CidadesFragment extends Fragment {
 
                         Constantes.citys = result;
                         createRecyclerView();
-                        createFloatingActionButton();
 
                         progressDialog.dismiss();
                     }
@@ -110,8 +111,9 @@ public class CidadesFragment extends Fragment {
 
     }
 
-    public void createFloatingActionButton(){
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_cidade);
+    public void createFloatingActionButton(View view){
+
+        FloatingActionButton fab = view.findViewById(R.id.fab_cidade);
         fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

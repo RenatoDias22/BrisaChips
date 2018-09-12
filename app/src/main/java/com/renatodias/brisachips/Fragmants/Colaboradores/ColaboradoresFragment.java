@@ -51,6 +51,8 @@ public class ColaboradoresFragment extends Fragment {
         setToolbar();
         Constantes.isFragmentRegiao = false;
 
+        createFloatingActionButton(view);
+
         setProgressLogin(getActivity());
         getColaboradores();
 
@@ -74,7 +76,6 @@ public class ColaboradoresFragment extends Fragment {
 
                         Constantes.ponts = result;
                         createRecyclerView();
-                        createFloatingActionButton();
                         progressDialog.dismiss();
                     }
                 }
@@ -91,9 +92,9 @@ public class ColaboradoresFragment extends Fragment {
             });
     }
 
-    private void createFloatingActionButton() {
+    private void createFloatingActionButton(View view) {
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_colaborador);
+        FloatingActionButton fab = view.findViewById(R.id.fab_colaborador);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

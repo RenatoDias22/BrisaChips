@@ -48,6 +48,8 @@ public class RegioesFragment extends Fragment {
 
         setToolbar();
 
+        createFloatingActionButton(view);
+
         Constantes.isFragmentRegiao = true;
 
         setProgressLogin(getActivity());
@@ -74,7 +76,6 @@ public class RegioesFragment extends Fragment {
 
                             Constantes.regioes = result;
                             createRecyclerView();
-                            createFloatingActionButton();
                             progressDialog.dismiss();
                         }
                     }
@@ -94,9 +95,9 @@ public class RegioesFragment extends Fragment {
 
     }
 
-    private void createFloatingActionButton() {
+    private void createFloatingActionButton(View view) {
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_regiao);
+        FloatingActionButton fab = view.findViewById(R.id.fab_regiao);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
