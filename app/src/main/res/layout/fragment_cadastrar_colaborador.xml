@@ -155,7 +155,7 @@
                 android:textColor="@color/cinzaAppPadrao"
                 android:theme="@style/EditTextLogin" />
 
-            <EditText
+            <Spinner
                 android:id="@+id/cidade_cadastro"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -207,11 +207,28 @@
                 android:textColor="@color/cinzaAppPadrao"
                 android:theme="@style/EditTextLogin" />
 
+            <ImageButton
+                android:id="@+id/image_cadastrar"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_below="@+id/endereco_cadastro"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="48dp"
+                android:background="@drawable/ic_camera_alt_black_24dp"
+                android:backgroundTint="@color/logo"
+                android:text="Cadastrar"
+                android:textColor="@color/branco" />
+
+            />
+
             <Switch
                 android:id="@+id/switch1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/endereco_cadastro"
+                android:layout_below="@+id/image_cadastrar"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"

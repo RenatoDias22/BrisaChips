@@ -59,6 +59,9 @@ public class NetworkClinet  {
         @GET("regions/{pk}/")
         Call<List<City>> getAllCitys(@Path(value = "pk", encoded = true) String pk);
 
+        @GET("cities/")
+        Call<List<City>> getAllCitys();
+
         @GET("cities/{pk}/")
         Call<List<Ponts>> getAllPonts(@Path(value = "pk", encoded = true) String pk);
 
