@@ -8,9 +8,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,24 +23,40 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+import com.renatodias.brisachips.Fragmants.Cadastro.Model.LatlongPosition;
+import com.renatodias.brisachips.Fragmants.Cadastro.Model.User;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
+import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,7 +69,8 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     NetworkClinet service;
 
     Double latitude;
-    Double longetude;
+    Double longitude;
+
     Uri outputFileUri;
     File file;
 
@@ -115,6 +137,40 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
         return view;
     }
 
+    public void cadastrarPontoColaborador(JSONObject jsonObject){
+        progressDialog.show();
+
+        service
+            .getAPIWithKey()
+            .cadastrarPontoColaborador(jsonObject)
+            .enqueue(new Callback<ColaboradorSuper>() {
+                @Override
+                public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
+
+                    ColaboradorSuper result = (ColaboradorSuper) response.body();
+                    if (result.getMessage() != "") {
+
+                        createAlertViewSucesso("Sucesso!", result.getMessage(), getActivity());
+                        progressDialog.dismiss();
+                    }else{
+                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
+
+                    progressDialog.dismiss();
+                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", getActivity());
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
+
     public void getCitys(){
 
         progressDialog.show();
@@ -175,30 +231,84 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     public void ClickCadastrar(){
 
-        conteudoPositionSpinner();
-        conteudoFoto();
+
+        if (nome_empresa.getText().toString() != "" &&
+                cpf_cnpj.getText().toString() != "" &&
+                nome_telefone_1.getText().toString() != "" &&
+                nome_email.getText().toString() != "" &&
+                nome_endereco.getText().toString() != "" &&
+                nome_bairro.getText().toString() != "" &&
+                conteudoPositionSpinner() > 0) {
+
+            JSONObject user = new JSONObject();
+            try {
+                user.put("fantasy_name", nome_fantasia.getText().toString());
+                user.put("name", nome_empresa.getText().toString());
+                user.put("cnpj", cpf_cnpj.getText().toString());
+                user.put("uf_number", nome_incricao_estadual.getText().toString());
+                user.put("city_number", nome_incricao_municial.getText().toString());
+                user.put("phone1", nome_telefone_1.getText().toString());
+                user.put("phone2", nome_telefone_2.getText().toString());
+                user.put("contact", nome_email.getText().toString());
+                user.put("city", Constantes.citys.get(conteudoPositionSpinner()-1).getId());
+                user.put("address", nome_endereco.getText().toString());
+                user.put("neighborhood", nome_bairro.getText().toString());
+
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            JSONObject position = new JSONObject();
+            try {
+                position.put("latitude", latitude);
+                position.put("longitude", longitude);
+
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("user", user);
+                jsonObject.put("position", position);
+                jsonObject.put("image", conteudoFoto());
+
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            cadastrarPontoColaborador(jsonObject);
+        } else {
+            createAlertViewSucesso("Falhou!","Verifique se todos os campos estão preenchidos!", getActivity());
+        }
     }
 
 
     public void setTextEdits(View view) {
 
         nome_empresa = (EditText) view.findViewById(R.id.nome_empresa);
+//        setOnEditorActionListenerEditText(nome_empresa,nome_fantasia);
         nome_fantasia = (EditText) view.findViewById(R.id.nome_fantasia);
-
+//        setOnEditorActionListenerEditText(nome_fantasia,cpf_cnpj);
         cpf_cnpj = (EditText) view.findViewById(R.id.nome_cpf_cnpj);
         cpf_cnpj.addTextChangedListener(CpfCnpjMaks.insert(cpf_cnpj));
-
+//        setOnEditorActionListenerEditText(cpf_cnpj,nome_incricao_estadual);
         nome_incricao_estadual = (EditText) view.findViewById(R.id.nome_incricao_estadual);
         nome_incricao_municial = (EditText) view.findViewById(R.id.nome_incricao_municial);
-
+//        setOnEditorActionListenerEditText(nome_incricao_estadual,nome_incricao_municial);
         nome_telefone_1 = (EditText) view.findViewById(R.id.nome_telefone_1);
         nome_telefone_1.addTextChangedListener(MaskEditUtil.mask(nome_telefone_1,MaskEditUtil.FORMAT_FONE));
-
+//        setOnEditorActionListenerEditText(nome_incricao_municial,nome_telefone_1);
         nome_telefone_2 = (EditText) view.findViewById(R.id.nome_telefone_2);
         nome_telefone_2.addTextChangedListener(MaskEditUtil.mask(nome_telefone_2,MaskEditUtil.FORMAT_FONE));
-
+//        setOnEditorActionListenerEditText(nome_telefone_1,nome_telefone_2);
         nome_email = (EditText) view.findViewById(R.id.email_cadastro);
+//        setOnEditorActionListenerEditText(nome_telefone_2,nome_email);
         nome_bairro = (EditText) view.findViewById(R.id.bairro_cadastro);
+//        setOnEditorActionListenerEditText(nome_bairro,nome_email);
         nome_endereco = (EditText) view.findViewById(R.id.endereco_cadastro);
 
     }
@@ -216,7 +326,23 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
             if (location != null) {
                 latitude = location.getLatitude();
-                longetude = location.getLongitude();
+                longitude = location.getLongitude();
+
+                Geocoder geocoder;
+                List<Address> addresses;
+                geocoder = new Geocoder(getActivity(), Locale.getDefault());
+
+                try {
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    String address = addresses.get(0).getAddressLine(0);
+                    String[] address_separated = address.split("-");
+                    nome_endereco.setText(address_separated[0]);
+                    String [] separated = address_separated[1].split(",");
+                    nome_bairro.setText(separated[0]);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -233,10 +359,45 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
         }
     }
 
+    private void setNavigation() {
+        MenuLateralActivity.toolbar.setTitle("Cadastrar Colaborador");
+        if (Constantes.isFragmentRegiao) {
+            MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
+            MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getFragmentManager().popBackStack();
+                }
+            });
+        }
+    }
+
+    public int conteudoPositionSpinner(){
+        return cidade.getSelectedItemPosition();
+//        if(posicao == 0){
+//
+//        }else {
+//            String itemSelecionado = Constantes.citys.get(posicao).getName();
+//        }
+    }
+
+    public ImageView conteudoFoto(){
+        String filePath = file.getPath();
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        ImageView mImageView = new ImageButton(getActivity());
+        mImageView.setImageBitmap(bitmap);
+        return mImageView;
+    }
+
+    private void setProgressLogin(Context context) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Carregando...");
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         latitude = location.getLatitude();
-        longetude = location.getLongitude();
+        longitude = location.getLongitude();
     }
 
     @Override
@@ -254,36 +415,37 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     }
 
-    private void setNavigation() {
-        MenuLateralActivity.toolbar.setTitle("Cadastrar Colaborador");
-        if (Constantes.isFragmentRegiao) {
-            MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
-            MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getFragmentManager().popBackStack();
-                }
-            });
-        }
-    }
+    public void createAlertViewSucesso(String title, String subTitulo, Context context){
 
-    public void conteudoPositionSpinner(){
-        int posicao = cidade.getSelectedItemPosition();
-        if(posicao == 0){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewDialog = inflater.inflate(R.layout.dialog_home_pedidos, null);
 
-        }else {
-            String itemSelecionado = Constantes.citys.get(posicao).getName();
-        }
-    }
+        TextView titulo = viewDialog.findViewById(R.id.peca_chip_item);
+        titulo.setText(title);
 
-    public void conteudoFoto(){
-        String filePath = file.getPath();
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-//        mImageView.setImageBitmap(bitmap);
-    }
+        TextView sub = viewDialog.findViewById(R.id.peca_chip_item_sub);
+        sub.setText(subTitulo);
 
-    private void setProgressLogin(Context context) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Carregando...");
+        TextView edit = viewDialog.findViewById(R.id.quantidade_item_alert);
+        edit.setVisibility(View.INVISIBLE);
+
+        Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
+        pedir.setText("Ok");
+
+        Button cancelar = (Button) viewDialog.findViewById(R.id.cancelar_dialog_button);
+        cancelar.setVisibility(View.INVISIBLE);
+
+        mBuilder.setView(viewDialog);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        pedir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 }

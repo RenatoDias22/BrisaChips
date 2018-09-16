@@ -173,10 +173,27 @@
                 android:theme="@style/EditTextLogin" />
 
             <EditText
-                android:id="@+id/bairro_cadastro"
+                android:id="@+id/endereco_cadastro"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cidade_cadastro"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:hint="Endereço"
+                android:imeOptions="actionNext"
+                android:lineSpacingExtra="20sp"
+                android:lines="1"
+                android:maxLines="1"
+                android:textColor="@color/cinzaAppPadrao"
+                android:theme="@style/EditTextLogin" />
+
+            <EditText
+                android:id="@+id/bairro_cadastro"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/endereco_cadastro"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -189,29 +206,12 @@
                 android:textColor="@color/cinzaAppPadrao"
                 android:theme="@style/EditTextLogin" />
 
-            <EditText
-                android:id="@+id/endereco_cadastro"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/bairro_cadastro"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="20dp"
-                android:hint="Endereço"
-                android:imeOptions="actionNext"
-                android:inputType="textPassword"
-                android:lineSpacingExtra="20sp"
-                android:lines="1"
-                android:maxLines="1"
-                android:textColor="@color/cinzaAppPadrao"
-                android:theme="@style/EditTextLogin" />
 
             <ImageButton
                 android:id="@+id/image_cadastrar"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:layout_below="@+id/endereco_cadastro"
+                android:layout_below="@+id/bairro_cadastro"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="50dp"
@@ -232,7 +232,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"
-                android:text="Interno" />
+                android:text="Solicitou Máquina" />
 
             <Button
                 android:id="@+id/button_cadastro"
