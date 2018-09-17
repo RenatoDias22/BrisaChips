@@ -3,6 +3,7 @@ package com.renatodias.brisachips.Network;
 import android.media.Image;
 
 import com.google.gson.JsonObject;
+import com.renatodias.brisachips.Fragmants.Cadastro.Model.ImageId;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.LatlongPosition;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.User;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
@@ -72,9 +73,11 @@ public class NetworkClinet  {
         @GET("cities/{pk}/")
         Call<List<Ponts>> getAllPonts(@Path(value = "pk", encoded = true) String pk);
 
-        @POST("sales/")
+        @POST("points/")
         Call<ColaboradorSuper> cadastrarPontoColaborador(@Body JSONObject body);
 
+        @POST("images/")
+        Call<ImageId> postImagem(@Body JSONObject body);
     }
 
     public static WebServiceAPI getNetworkClinet() {

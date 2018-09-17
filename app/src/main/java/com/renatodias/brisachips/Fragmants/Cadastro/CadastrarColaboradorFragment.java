@@ -17,6 +17,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +39,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
+import com.renatodias.brisachips.Fragmants.Cadastro.Model.ImageId;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.LatlongPosition;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.User;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
@@ -51,8 +56,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +89,9 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     Uri outputFileUri;
     File file;
+    String image;
+
+    ArrayList<ImageId> imagesIds = new ArrayList<ImageId>();
 
     static final int RIQUEST_LOCATION = 1;
     public static final int CAMERA_REQUEST = 1888;
@@ -148,17 +167,59 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    if (result.getMessage() != "") {
+                    if(result != null) {
+                        if (result.getMessage() != "") {
 
-                        createAlertViewSucesso("Sucesso!", result.getMessage(), getActivity());
-                        progressDialog.dismiss();
-                    }else{
+                            createAlertViewSucesso("Sucesso!", result.getMessage(), getActivity());
+                            progressDialog.dismiss();
+                        } else {
+                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                            progressDialog.dismiss();
+                        }
+                    }else {
                         createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                        progressDialog.dismiss();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
+
+                    progressDialog.dismiss();
+                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", getActivity());
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
+
+    public void postImage(JSONObject jsonObject){
+        progressDialog.show();
+
+        service
+            .getAPIWithKey()
+            .postImagem(jsonObject)
+            .enqueue(new Callback<ImageId>() {
+                @Override
+                public void onResponse(Call<ImageId> call, Response<ImageId> response) {
+
+                    ImageId result = (ImageId) response.body();
+                    if(result != null) {
+                        imagesIds.add(result);
+                        createAlertViewSucesso("Sucesso!", "Imagem enviada com sucesso!", getActivity());
+                        progressDialog.dismiss();
+
+                    }else {
+                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                        progressDialog.dismiss();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ImageId> call, Throwable t) {
 
                     progressDialog.dismiss();
                     createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", getActivity());
@@ -197,8 +258,6 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                         ArrayAdapter<String> itemsAdapter =
                                 new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, items);
 
-//                        ArrayAdapter adapter = new ArrayAdapter(getContext(),
-//                                android.R.layout.simple_spinner_item, Constantes.citys);
                         cidade.setAdapter(itemsAdapter);
 
                         progressDialog.dismiss();
@@ -219,13 +278,12 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     public void getCAmera(Activity activity, int CODE) {
 
-        String arquivoFoto = activity.getExternalFilesDir(null) + "/" + System.currentTimeMillis() + ".jpg";
-        file = new File(arquivoFoto);
-        outputFileUri = Uri.fromFile(file);
+//        String arquivoFoto = activity.getExternalFilesDir(null) + "/" + System.currentTimeMillis() + ".jpg";
+//        file = new File(arquivoFoto);
+//        outputFileUri = Uri.fromFile(file);
 
-        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-        startActivityForResult(camera, CODE);
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        this.startActivityForResult(intent, CODE);
 
     }
 
@@ -273,7 +331,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
             try {
                 jsonObject.put("user", user);
                 jsonObject.put("position", position);
-                jsonObject.put("image", conteudoFoto());
+//                jsonObject.put("image", conteudoFoto());
 
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
@@ -381,12 +439,12 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 //        }
     }
 
-    public ImageView conteudoFoto(){
+    public Bitmap conteudoFoto(){
         String filePath = file.getPath();
         Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-        ImageView mImageView = new ImageButton(getActivity());
-        mImageView.setImageBitmap(bitmap);
-        return mImageView;
+//        ImageView mImageView = new ImageButton(getActivity());
+//        mImageView.setImageBitmap(bitmap);
+        return bitmap;
     }
 
     private void setProgressLogin(Context context) {
@@ -447,5 +505,152 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 dialog.dismiss();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (data != null && requestCode == CAMERA_REQUEST) {
+
+            Uri targetUri = data.getData();
+            Bitmap bitmap;
+            try {
+
+                bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(targetUri));
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+                image = ConvertBitmapToString(resizedBitmap);
+
+                JSONObject imageJson = new JSONObject();
+                try {
+                    imageJson.put("image", image);
+
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                postImage(imageJson);
+
+                Upload();
+
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public static String ConvertBitmapToString(Bitmap bitmap){
+        String encodedImage = "";
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        try {
+            encodedImage= URLEncoder.encode(Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return encodedImage;
+    }
+    private void Upload() {
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                new UploadFile().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "your api link");
+            } else {
+                new UploadFile().execute("your api link");
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+    private class UploadFile extends AsyncTask<String, Void, Void> {
+
+
+        private String Content;
+        private String Error = null;
+        String data = "";
+        private BufferedReader reader;
+
+
+        protected void onPreExecute() {
+
+            try {
+
+                data += "&" + URLEncoder.encode("image", "UTF-8") + "=" + "data:image/png;base64," + image;
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        protected Void doInBackground(String... urls) {
+
+            HttpURLConnection connection = null;
+            try {
+                URL url = new URL(urls[0]);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                con.setRequestMethod("POST");
+                con.setUseCaches(false);
+                con.setDoInput(true);
+                con.setDoOutput(true);
+                con.setRequestProperty("Content-Length", "" + data.getBytes().length);
+                con.setRequestProperty("Connection", "Keep-Alive");
+                con.setDoOutput(true);
+
+                OutputStream os = con.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+
+                //make request
+                writer.write(data);
+                writer.flush();
+                writer.close();
+                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                Content = sb.toString();
+            } catch (Exception ex) {
+                Error = ex.getMessage();
+            }
+            return null;
+
+        }
+
+
+        protected void onPostExecute(Void unused) {
+            // NOTE: You can call UI Element here.
+
+//            pDialog.dismiss();
+            try {
+
+                if (Content != null) {
+                    JSONObject jsonResponse = new JSONObject(Content);
+                    String status = jsonResponse.getString("status");
+                    if ("200".equals(status)) {
+
+                        Toast.makeText(getActivity().getApplicationContext(), "File uploaded successfully", Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(getActivity().getApplicationContext(), "Something is wrong ! Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
     }
 }
