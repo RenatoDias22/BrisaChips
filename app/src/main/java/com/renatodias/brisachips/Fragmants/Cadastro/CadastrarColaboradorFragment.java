@@ -15,36 +15,27 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.ImageId;
-import com.renatodias.brisachips.Fragmants.Cadastro.Model.LatlongPosition;
-import com.renatodias.brisachips.Fragmants.Cadastro.Model.User;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
@@ -52,7 +43,6 @@ import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,10 +60,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -87,8 +77,6 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     Double latitude;
     Double longitude;
 
-    Uri outputFileUri;
-    File file;
     String image;
 
     ArrayList<ImageId> imagesIds = new ArrayList<ImageId>();
@@ -156,27 +144,29 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
         return view;
     }
 
-    public void cadastrarPontoColaborador(JSONObject jsonObject){
+    public void cadastrarPontoColaborador(JSONObject points){
         progressDialog.show();
+
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),points.toString());
 
         service
             .getAPIWithKey()
-            .cadastrarPontoColaborador(jsonObject)
+            .cadastrarPontoColaborador(body)
             .enqueue(new Callback<ColaboradorSuper>() {
                 @Override
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    if(result != null) {
+                    if (result != null) {
                         if (result.getMessage() != "") {
 
-                            createAlertViewSucesso("Sucesso!", result.getMessage(), getActivity());
+                            createAlertViewSucesso("Sucesso!", "Seu cadastro foi realizado com sucesso!", getActivity());
                             progressDialog.dismiss();
                         } else {
                             createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
                             progressDialog.dismiss();
                         }
-                    }else {
+                    } else {
                         createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
                         progressDialog.dismiss();
                     }
@@ -198,10 +188,11 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     public void postImage(JSONObject jsonObject){
         progressDialog.show();
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),jsonObject.toString());
 
         service
             .getAPIWithKey()
-            .postImagem(jsonObject)
+            .postImagem(body)
             .enqueue(new Callback<ImageId>() {
                 @Override
                 public void onResponse(Call<ImageId> call, Response<ImageId> response) {
@@ -278,10 +269,6 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     public void getCAmera(Activity activity, int CODE) {
 
-//        String arquivoFoto = activity.getExternalFilesDir(null) + "/" + System.currentTimeMillis() + ".jpg";
-//        file = new File(arquivoFoto);
-//        outputFileUri = Uri.fromFile(file);
-
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         this.startActivityForResult(intent, CODE);
 
@@ -300,6 +287,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
             JSONObject user = new JSONObject();
             try {
+                user.put("level", "3");
                 user.put("fantasy_name", nome_fantasia.getText().toString());
                 user.put("name", nome_empresa.getText().toString());
                 user.put("cnpj", cpf_cnpj.getText().toString());
@@ -327,18 +315,24 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 e.printStackTrace();
             }
 
-            JSONObject jsonObject = new JSONObject();
+            int [] ids = idsFoto();
+
+            String idss = "[]";
+            if(ids.length != 0){
+                idss = ids.toString();
+            }
+            JSONObject points = new JSONObject();
             try {
-                jsonObject.put("user", user);
-                jsonObject.put("position", position);
-//                jsonObject.put("image", conteudoFoto());
+                points.put("user", user);
+                points.put("position", position);
+                points.put("images", idss);
 
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
-            cadastrarPontoColaborador(jsonObject);
+            cadastrarPontoColaborador(points);
         } else {
             createAlertViewSucesso("Falhou!","Verifique se todos os campos estão preenchidos!", getActivity());
         }
@@ -439,12 +433,13 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 //        }
     }
 
-    public Bitmap conteudoFoto(){
-        String filePath = file.getPath();
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-//        ImageView mImageView = new ImageButton(getActivity());
-//        mImageView.setImageBitmap(bitmap);
-        return bitmap;
+    public int[] idsFoto(){
+
+        int[] ids = new int[imagesIds.size()];
+        for (int i = 0; i < imagesIds.size(); i++){
+            ids[i] = imagesIds.get(i).getId();
+        }
+        return ids;
     }
 
     private void setProgressLogin(Context context) {
@@ -543,17 +538,15 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     public static String ConvertBitmapToString(Bitmap bitmap){
         String encodedImage = "";
-
+        byte[] b = new byte[0];
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        try {
-            encodedImage= URLEncoder.encode(Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        b = byteArrayOutputStream.toByteArray();
+        encodedImage= Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
 
         return encodedImage;
     }
+
     private void Upload() {
 
         try {
@@ -629,9 +622,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
 
         protected void onPostExecute(Void unused) {
-            // NOTE: You can call UI Element here.
 
-//            pDialog.dismiss();
             try {
 
                 if (Content != null) {

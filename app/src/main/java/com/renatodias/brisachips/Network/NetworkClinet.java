@@ -1,19 +1,12 @@
 package com.renatodias.brisachips.Network;
 
-import android.media.Image;
-
-import com.google.gson.JsonObject;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.ImageId;
-import com.renatodias.brisachips.Fragmants.Cadastro.Model.LatlongPosition;
-import com.renatodias.brisachips.Fragmants.Cadastro.Model.User;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Colaboradores.Model.Ponts;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
 import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Login.Model.AuthUser;
 import com.renatodias.brisachips.Utils.Constantes;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,8 +25,6 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.Path;
 
 public class NetworkClinet  {
@@ -74,10 +65,10 @@ public class NetworkClinet  {
         Call<List<Ponts>> getAllPonts(@Path(value = "pk", encoded = true) String pk);
 
         @POST("points/")
-        Call<ColaboradorSuper> cadastrarPontoColaborador(@Body JSONObject body);
+        Call<ColaboradorSuper> cadastrarPontoColaborador(@Body RequestBody body);
 
         @POST("images/")
-        Call<ImageId> postImagem(@Body JSONObject body);
+        Call<ImageId> postImagem(@Body RequestBody image);
     }
 
     public static WebServiceAPI getNetworkClinet() {
@@ -101,7 +92,6 @@ public class NetworkClinet  {
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request original = chain.request();
 
-                // Request customization: add request headers
                 Request.Builder requestBuilder = original.newBuilder()
                         .addHeader("Authorization","token " + Constantes.token);
 

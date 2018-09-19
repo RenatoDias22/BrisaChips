@@ -39,20 +39,6 @@ public class AuthUser {
         @SerializedName("user_level")
         private String user_level;
 
-//        {
-//            "user": {
-//            "id": 1,
-//                    "name": "Morais Neto",
-//                    "email": "moraisnetocc@gmail.com",
-//                    "has_password": true,
-//                    "profile_photo": null,
-//                    "facebook_photo_url": null,
-//                    "facebook_user": false,
-//                    "user_level": 0
-//        },
-//            "auth_token": "89f32b813c1261817b100be757e7edf900cc3c57"
-//        }
-
         public User() {
         }
 

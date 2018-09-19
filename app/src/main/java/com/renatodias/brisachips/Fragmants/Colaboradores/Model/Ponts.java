@@ -8,10 +8,6 @@ public class Ponts {
     @SerializedName("name")
     private String name;
 
-
-    public Ponts() {
-    }
-
     public Ponts(long id, String name) {
         this.id = id;
         this.name = name;
