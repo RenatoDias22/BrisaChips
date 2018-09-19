@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,6 +97,8 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     EditText nome_bairro;
     EditText nome_endereco;
 
+    Switch card_machine;
+
     Spinner cidade;
     ImageButton camera;
     Button cadastrar;
@@ -115,6 +118,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
         camera = (ImageButton) view.findViewById(R.id.image_cadastrar);
         cadastrar = (Button) view.findViewById(R.id.button_cadastro);
+        card_machine = (Switch) view.findViewById(R.id.card_machine);
 
         cidade  = (Spinner) view.findViewById(R.id.cidade_cadastro);
 
@@ -299,6 +303,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 user.put("city", Constantes.citys.get(conteudoPositionSpinner()-1).getId());
                 user.put("address", nome_endereco.getText().toString());
                 user.put("neighborhood", nome_bairro.getText().toString());
+                user.put("card_machine", card_machine.isChecked());
 
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
