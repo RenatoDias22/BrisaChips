@@ -2,11 +2,15 @@ package com.renatodias.brisachips.Login.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import okhttp3.ResponseBody;
+
 public class AuthUser {
     @SerializedName("auth_token")
     private String auth_token;
     @SerializedName("user")
     private User user;
+    @SerializedName("detail")
+    private String detail;
 
     public AuthUser(String auth_token, User user) {
         this.auth_token = auth_token;
@@ -19,6 +23,14 @@ public class AuthUser {
 
     public User getUser() {
         return user;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
     public class User{

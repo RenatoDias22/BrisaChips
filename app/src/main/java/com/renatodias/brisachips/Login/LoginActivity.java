@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.renatodias.brisachips.Fragmants.Home.Adapter.HomeAdapter;
 import com.renatodias.brisachips.Login.Model.AuthUser;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
@@ -103,14 +105,27 @@ public class LoginActivity extends AppCompatActivity {
                 AuthUser result = response.body();
 
                 if(result != null) {
+
                     Constantes.user = result.getUser();
                     Constantes.token = result.getAuth_token();
 
                     Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
                     LoginActivity.this.startActivity(mainIntent);
                     LoginActivity.this.finish();
+
+
                 }else{
-                    createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
+
+
+                    if(response.code() == 400) {
+                        createAlertViewSucesso("Algo deu errado :(", "Usuário ou senha inválidos.");
+                    } else {
+                        if(response.code() == 428) {
+                            createAlertViewAtualizarSenha("Troque sua senha!", "Digite abraixo sua senha de 8 caracteres!");
+                        } else {
+                            createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
+                        }
+                    }
                 }
             }
 
@@ -161,6 +176,49 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-//    "auth":"http://chips.brisanet.net.br/api/auth/","cities":"http://chips.brisanet.net.br/api/cities/","regions":"http://chips.brisanet.net.br/api/regions/","points":"http://chips.brisanet.net.br/api/points/","images":"http://chips.brisanet.net.br/api/images/","orders":"http://chips.brisanet.net.br/api/orders/","ships":"http://chips.brisanet.net.br/api/ships/
+    public void createAlertViewAtualizarSenha(String title, String subTitulo){
 
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewDialog = inflater.inflate(R.layout.dialog_home_pedidos, null);
+
+        TextView titulo = viewDialog.findViewById(R.id.peca_chip_item);
+        titulo.setText(title);
+
+        TextView sub = viewDialog.findViewById(R.id.peca_chip_item_sub);
+        sub.setText(subTitulo);
+
+        TextView edit = viewDialog.findViewById(R.id.quantidade_item_alert);
+        edit.setHint("Nova Senha");
+        edit.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
+        pedir.setText("Ok");
+
+        Button cancelar = (Button) viewDialog.findViewById(R.id.cancelar_dialog_button);
+        cancelar.setText("Cancelar");
+
+        mBuilder.setView(viewDialog);
+        final AlertDialog dialog = mBuilder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        pedir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
 }
