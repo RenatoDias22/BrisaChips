@@ -142,6 +142,48 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public void redefinirSenha(String new_password){
+        progressDialog.show();
+        String email = emailLogin.getText().toString().trim();
+        String senha = senhaLogin.getText().toString().trim();
+
+        service
+            .getNetworkClinet()
+            .redefinSenha(email, senha, new_password)
+            .enqueue(new Callback<AuthUser>() {
+
+                @Override
+                public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
+                    progressDialog.dismiss();
+                    AuthUser result = response.body();
+
+                    if(result != null) {
+
+                        Constantes.user = result.getUser();
+                        Constantes.token = result.getAuth_token();
+
+                        Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
+                        LoginActivity.this.startActivity(mainIntent);
+                        LoginActivity.this.finish();
+
+                    }else{
+                        createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<AuthUser> call, Throwable t) {
+                    progressDialog.dismiss();
+                    createAlertViewSucesso("Algo deu errado :(", "Erro na comunicação com o servidor!");
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
+
     public void createAlertViewSucesso(String title, String subTitulo){
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
@@ -189,9 +231,9 @@ public class LoginActivity extends AppCompatActivity {
         TextView sub = viewDialog.findViewById(R.id.peca_chip_item_sub);
         sub.setText(subTitulo);
 
-        TextView edit = viewDialog.findViewById(R.id.quantidade_item_alert);
+        final TextView edit = viewDialog.findViewById(R.id.quantidade_item_alert);
         edit.setHint("Nova Senha");
-        edit.setInputType(InputType.TYPE_CLASS_TEXT);
+        edit.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
         pedir.setText("Ok");
@@ -208,7 +250,8 @@ public class LoginActivity extends AppCompatActivity {
         pedir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String new_password = edit.getText().toString().trim();
+                redefinirSenha(new_password);
                 dialog.dismiss();
 
             }
@@ -221,4 +264,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+//66387758
 }

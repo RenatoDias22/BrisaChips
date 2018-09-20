@@ -36,6 +36,11 @@ public class NetworkClinet  {
         Call<AuthUser> login(@Field("email") String email,
                              @Field("password") String password);
 
+        @FormUrlEncoded
+        @POST("auth/activate_account/")
+        Call<AuthUser> redefinSenha(@Field("email") String email,
+                                    @Field("password") String password,
+                                    @Field("new_password") String new_password);
 
         @GET("orders/get_partners_orders/")
         Call<List<ColaboradorSuper>> getAllPartnersOrders();

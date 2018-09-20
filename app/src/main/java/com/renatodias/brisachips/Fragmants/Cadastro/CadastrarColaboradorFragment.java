@@ -161,19 +161,19 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    if (result != null) {
-                        if (result.getMessage() != "") {
+//                    if (result != null) {
+//                        if (result.getMessage() != "") {
 
-                            createAlertViewSucesso("Sucesso!", "Seu cadastro foi realizado com sucesso!", getActivity());
+                            createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
                             progressDialog.dismiss();
-                        } else {
-                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
-                            progressDialog.dismiss();
-                        }
-                    } else {
-                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
-                        progressDialog.dismiss();
-                    }
+//                        } else {
+//                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+//                            progressDialog.dismiss();
+//                        }
+//                    } else {
+//                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+//                        progressDialog.dismiss();
+//                    }
                 }
 
                 @Override
@@ -377,6 +377,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, RIQUEST_LOCATION);
+            getLocation();
         } else {
 
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
