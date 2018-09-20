@@ -44,6 +44,7 @@ import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -161,20 +162,20 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
-//                    if (result != null) {
-//                        if (result.getMessage() != "") {
+                    if (result != null) {
+                        if (response.code() == 201) {
 
                             createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
                             progressDialog.dismiss();
                             getFragmentManager().popBackStack();
-//                        } else {
-//                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
-//                            progressDialog.dismiss();
-//                        }
-//                    } else {
-//                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
-//                        progressDialog.dismiss();
-//                    }
+                        } else {
+                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                            progressDialog.dismiss();
+                        }
+                    } else {
+                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                        progressDialog.dismiss();
+                    }
                 }
 
                 @Override
@@ -321,17 +322,13 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 e.printStackTrace();
             }
 
-            int [] ids = idsFoto();
+            JSONArray ids = idsFoto();
 
-            String idss = "[]";
-            if(ids.length != 0){
-                idss = ids.toString();
-            }
             JSONObject points = new JSONObject();
             try {
                 points.put("user", user);
                 points.put("position", position);
-                points.put("images", idss);
+                points.put("images", ids);
 
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
@@ -440,11 +437,14 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 //        }
     }
 
-    public int[] idsFoto(){
+    public JSONArray idsFoto(){
 
-        int[] ids = new int[imagesIds.size()];
+        JSONArray ids = new JSONArray();
+
+//        int[] ids = new int[imagesIds.size()];
         for (int i = 0; i < imagesIds.size(); i++){
-            ids[i] = imagesIds.get(i).getId();
+            ids.put(imagesIds.get(i).getId());
+//            ids[i] = ;
         }
         return ids;
     }

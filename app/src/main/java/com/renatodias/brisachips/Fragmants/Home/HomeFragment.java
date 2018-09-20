@@ -214,14 +214,17 @@ public class HomeFragment extends Fragment {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
                     if (result != null) {
-                        getCitysOrdes(true);
+                        if (response.code() == 201) {
+                            getCitysOrdes(true);
 //                        if(Constantes.id_pontos_colaborador != "") {
 //                            getCitysOrdesColaborador(true);
 //                        }else{
 //                            getCitysOrdes(true);
 //                        }
-                        createAlertViewSucesso("Sucesso!", result.getMessage(), c);
-
+                            createAlertViewSucesso("Sucesso!", result.getMessage(), c);
+                        }else{
+                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", c);
+                        }
                     }else{
                         createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", c);
                     }
