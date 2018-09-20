@@ -30,15 +30,18 @@ public class ColaboradorAdapter extends RecyclerView.Adapter<ColaboradorAdapter.
 
         public final TextView titulo;
         public long id;
-//        public TextView quantidade;
-//        public TextView estoque;
+        public TextView quantidade;
+        public TextView estoque;
 
         public ViewHolderColaborador(View itemView) {
             super(itemView);
             titulo = (TextView) itemView.findViewById(R.id.item_name_colaborador);
 
-//            estoque = (TextView) itemView.findViewById(R.id.item_estoque_colaborador);
-//            quantidade = (TextView) itemView.findViewById(R.id.item_qtd_colaborador);
+            estoque = (TextView) itemView.findViewById(R.id.item_estoque_colaborador);
+            quantidade = (TextView) itemView.findViewById(R.id.item_qtd_colaborador);
+
+            estoque.setVisibility(View.INVISIBLE);
+            quantidade.setVisibility(View.INVISIBLE);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {

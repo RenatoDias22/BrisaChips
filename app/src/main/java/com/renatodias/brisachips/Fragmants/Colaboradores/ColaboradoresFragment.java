@@ -76,8 +76,8 @@ public class ColaboradoresFragment extends Fragment {
 
                         Constantes.ponts = result;
                         createRecyclerView();
-                        progressDialog.dismiss();
                     }
+                    progressDialog.dismiss();
                 }
 
                 @Override

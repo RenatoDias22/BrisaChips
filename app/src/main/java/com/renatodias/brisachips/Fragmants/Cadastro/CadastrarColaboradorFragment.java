@@ -166,6 +166,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
                             createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
                             progressDialog.dismiss();
+                            getFragmentManager().popBackStack();
 //                        } else {
 //                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
 //                            progressDialog.dismiss();

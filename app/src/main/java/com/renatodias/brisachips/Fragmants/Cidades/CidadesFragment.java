@@ -82,9 +82,8 @@ public class CidadesFragment extends Fragment {
 
                         Constantes.citys = result;
                         createRecyclerView();
-
-                        progressDialog.dismiss();
                     }
+                    progressDialog.dismiss();
                 }
 
                 @Override

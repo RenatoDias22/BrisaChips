@@ -76,8 +76,8 @@ public class RegioesFragment extends Fragment {
 
                             Constantes.regioes = result;
                             createRecyclerView();
-                            progressDialog.dismiss();
                         }
+                        progressDialog.dismiss();
                     }
 
                     @Override

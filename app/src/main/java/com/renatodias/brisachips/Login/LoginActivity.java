@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -234,6 +235,7 @@ public class LoginActivity extends AppCompatActivity {
         final TextView edit = viewDialog.findViewById(R.id.quantidade_item_alert);
         edit.setHint("Nova Senha");
         edit.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        edit.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
         Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
         pedir.setText("Ok");

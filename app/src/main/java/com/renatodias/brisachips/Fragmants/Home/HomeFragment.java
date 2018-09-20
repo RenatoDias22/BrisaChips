@@ -95,14 +95,13 @@ public class HomeFragment extends Fragment {
                     List<ColaboradorSuper> result = (List<ColaboradorSuper>) response.body();
 
                     if(result != null) {
-
                         Constantes.colaboradorSuper = result;
                         if (!atualization)
                             createRecyclerView();
                         else
                             loadRecycleViewCitys(adapterAux2);
-                        progressDialog.dismiss();
                     }
+                    progressDialog.dismiss();
                 }
 
                 @Override
@@ -181,9 +180,8 @@ public class HomeFragment extends Fragment {
                             createRecyclerView();
                         else
                             loadRecycleViewCitys(null);
-
-                        progressDialog.dismiss();
                     }
+                    progressDialog.dismiss();
                 }
 
                 @Override
@@ -215,7 +213,7 @@ public class HomeFragment extends Fragment {
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    if (result.getMessage() != "") {
+                    if (result != null) {
                         getCitysOrdes(true);
 //                        if(Constantes.id_pontos_colaborador != "") {
 //                            getCitysOrdesColaborador(true);
@@ -223,10 +221,11 @@ public class HomeFragment extends Fragment {
 //                            getCitysOrdes(true);
 //                        }
                         createAlertViewSucesso("Sucesso!", result.getMessage(), c);
-                        progressDialog.dismiss();
+
                     }else{
                         createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", c);
                     }
+                    progressDialog.dismiss();
                 }
 
                 @Override
@@ -258,13 +257,13 @@ public class HomeFragment extends Fragment {
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
 
-                    if (result.getMessage() != "") {
+                    if (result != null) {
                         getCitysOrdesSuper(true, adapteraux);
                         createAlertViewSucesso("Sucesso!", result.getMessage(), c);
-                        progressDialog.dismiss();
                     }else{
                         createAlertViewSucesso("Ops!", "Seu atendimento falhou, tente novamente!", c);
                     }
+                    progressDialog.dismiss();
                 }
 
                 @Override
@@ -292,12 +291,6 @@ public class HomeFragment extends Fragment {
             adapter.notifyDataSetChanged();
         }
     }
-
-//    public void loadRecycleViewCitysColaborador(){
-//
-//        adapter.setItems(getListOrdes(Constantes.colaborador), getActivity());
-//        adapter.notifyDataSetChanged();
-//    }
 
     private List<ColaboradorSuper> getListCitysOrdes(List<ColaboradorSuper> arrayList) {
 
