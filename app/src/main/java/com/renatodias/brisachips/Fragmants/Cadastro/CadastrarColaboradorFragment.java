@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -19,9 +20,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -84,6 +87,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     ArrayList<ImageId> imagesIds = new ArrayList<ImageId>();
 
     static final int RIQUEST_LOCATION = 1;
+    public static final int REQUEST_WRITE_STORAGE_REQUEST_CODE = 2;
     public static final int CAMERA_REQUEST = 1888;
     LocationManager locationManager;
 
@@ -163,7 +167,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
                     ColaboradorSuper result = (ColaboradorSuper) response.body();
                     if (result != null) {
-                        if (response.code() == 201) {
+                        if (response.code() == 201 || response.code() == 200) {
 
                             createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
                             progressDialog.dismiss();
@@ -514,31 +518,23 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
         if (data != null && requestCode == CAMERA_REQUEST) {
 
-            Uri targetUri = data.getData();
-            Bitmap bitmap;
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+            image = ConvertBitmapToString(resizedBitmap);
+
+            JSONObject imageJson = new JSONObject();
             try {
+                imageJson.put("image", image);
 
-                bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(targetUri));
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-                image = ConvertBitmapToString(resizedBitmap);
-
-                JSONObject imageJson = new JSONObject();
-                try {
-                    imageJson.put("image", image);
-
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                postImage(imageJson);
-
-                Upload();
-
-            } catch (FileNotFoundException e) {
+            } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+
+            postImage(imageJson);
+
+            Upload();
         }
 
     }
