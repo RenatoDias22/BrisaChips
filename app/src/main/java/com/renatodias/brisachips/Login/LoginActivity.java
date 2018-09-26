@@ -19,12 +19,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.orhanobut.hawk.Hawk;
 import com.renatodias.brisachips.Fragmants.Home.Adapter.HomeAdapter;
 import com.renatodias.brisachips.Login.Model.AuthUser;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
+import com.renatodias.brisachips.Utils.Utils;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,39 +47,51 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Hawk.init(this).build();
 
-        setProgressLogin();
+        if(Hawk.contains("user") && Hawk.contains("token")){
 
-        emailLogin = (EditText) findViewById(R.id.emailLogin);
-        senhaLogin = (EditText) findViewById(R.id.senhaLogin);
+            Constantes.user = Hawk.get("user");
+            Constantes.token = Hawk.get("token");
 
-        emailLogin.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.ACTION_DOWN
-                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    String cap = emailLogin.getText().toString().replace('\n', ' ')
-                            .trim();
-                    emailLogin.setText(cap);
-                    senhaLogin.requestFocus();
+            Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
+            LoginActivity.this.startActivity(mainIntent);
+            LoginActivity.this.finish();
+
+        } else {
+            setProgressLogin();
+
+            emailLogin = (EditText) findViewById(R.id.emailLogin);
+            senhaLogin = (EditText) findViewById(R.id.senhaLogin);
+
+            emailLogin.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH
+                            || actionId == EditorInfo.IME_ACTION_DONE
+                            || event.getAction() == KeyEvent.ACTION_DOWN
+                            && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                        String cap = emailLogin.getText().toString().replace('\n', ' ')
+                                .trim();
+                        emailLogin.setText(cap);
+                        senhaLogin.requestFocus();
+                    }
+                    return false;
                 }
-                return false;
-            }
 
-        });
+            });
 
-        senhaLogin.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    login();
-                    return true;
+            senhaLogin.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                        login();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        }
     }
 
     private void setProgressLogin() {
@@ -93,96 +107,110 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
         String email = emailLogin.getText().toString().trim();
         String senha = senhaLogin.getText().toString().trim();
+        if (Utils.verificaConexao(this)) {
+            service
+                .getNetworkClinet()
+                .login(email, senha)
+                .enqueue(new Callback<AuthUser>() {
 
-        service
-            .getNetworkClinet()
-            .login(email, senha)
-            .enqueue(new Callback<AuthUser>() {
-
-            @Override
-            public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
-                progressDialog.dismiss();
+                    @Override
+                    public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
+                        progressDialog.dismiss();
 //                generateDataList(response.body());
-                AuthUser result = response.body();
+                        AuthUser result = response.body();
 
-                if(result != null) {
+                        if (result != null) {
 
-                    Constantes.user = result.getUser();
-                    Constantes.token = result.getAuth_token();
+                            Constantes.user = result.getUser();
+                            Constantes.token = result.getAuth_token();
 
-                    Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
-                    LoginActivity.this.startActivity(mainIntent);
-                    LoginActivity.this.finish();
+                            Hawk.put("user", Constantes.user);
+                            Hawk.put("token", Constantes.token);
+
+                            Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
+                            LoginActivity.this.startActivity(mainIntent);
+                            LoginActivity.this.finish();
 
 
-                }else{
-
-
-                    if(response.code() == 400) {
-                        createAlertViewSucesso("Algo deu errado :(", "Usuário ou senha inválidos.");
-                    } else {
-                        if(response.code() == 428) {
-                            createAlertViewAtualizarSenha("Troque sua senha!", "Digite abraixo sua senha de 8 caracteres!");
                         } else {
-                            createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
+
+
+                            if (response.code() == 400) {
+                                createAlertViewSucesso("Algo deu errado :(", "Usuário ou senha inválidos.");
+                            } else {
+                                if (response.code() == 428) {
+                                    createAlertViewAtualizarSenha("Troque sua senha!", "Digite abraixo sua senha de 8 caracteres!");
+                                } else {
+                                    createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<AuthUser> call, Throwable t) {
-                progressDialog.dismiss();
-                createAlertViewSucesso("Algo deu errado :(", "Erro na comunicação com o servidor!");
-                try {
-                    throw  new InterruptedException("Erro na comunicação com o servidor!");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    @Override
+                    public void onFailure(Call<AuthUser> call, Throwable t) {
+                        progressDialog.dismiss();
+                        createAlertViewSucesso("Algo deu errado :(", "Erro na comunicação com o servidor!");
+                        try {
+                            throw new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        } else {
+            progressDialog.dismiss();
+            createAlertViewSucesso("Algo deu errado :(", "Verifique se está conectado a internet!");
+        }
     }
 
     public void redefinirSenha(String new_password){
         progressDialog.show();
         String email = emailLogin.getText().toString().trim();
         String senha = senhaLogin.getText().toString().trim();
+        if (Utils.verificaConexao(this)) {
+            service
+                .getNetworkClinet()
+                .redefinSenha(email, senha, new_password)
+                .enqueue(new Callback<AuthUser>() {
 
-        service
-            .getNetworkClinet()
-            .redefinSenha(email, senha, new_password)
-            .enqueue(new Callback<AuthUser>() {
+                    @Override
+                    public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
+                        progressDialog.dismiss();
+                        AuthUser result = response.body();
 
-                @Override
-                public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
-                    progressDialog.dismiss();
-                    AuthUser result = response.body();
+                        if (result != null) {
 
-                    if(result != null) {
+                            Constantes.user = result.getUser();
+                            Constantes.token = result.getAuth_token();
 
-                        Constantes.user = result.getUser();
-                        Constantes.token = result.getAuth_token();
+                            Hawk.put("user", Constantes.user);
+                            Hawk.put("token", Constantes.token);
 
-                        Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
-                        LoginActivity.this.startActivity(mainIntent);
-                        LoginActivity.this.finish();
+                            Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
+                            LoginActivity.this.startActivity(mainIntent);
+                            LoginActivity.this.finish();
 
-                    }else{
-                        createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
+                        } else {
+                            createAlertViewSucesso("Algo deu errado :(", "Verifique seu dados e tente novamente!");
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<AuthUser> call, Throwable t) {
-                    progressDialog.dismiss();
-                    createAlertViewSucesso("Algo deu errado :(", "Erro na comunicação com o servidor!");
-                    try {
-                        throw  new InterruptedException("Erro na comunicação com o servidor!");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void onFailure(Call<AuthUser> call, Throwable t) {
+                        progressDialog.dismiss();
+                        createAlertViewSucesso("Algo deu errado :(", "Erro na comunicação com o servidor!");
+                        try {
+                            throw new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
+                });
+        } else {
+            progressDialog.dismiss();
+            createAlertViewSucesso("Algo deu errado :(", "Verifique se está conectado a internet!");
+        }
     }
 
     public void createAlertViewSucesso(String title, String subTitulo){

@@ -39,6 +39,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.hawk.Hawk;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.ImageId;
 import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Home.Model.ColaboradorSuper;
@@ -46,6 +47,7 @@ import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
+import com.renatodias.brisachips.Utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +87,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     String image;
 
     ArrayList<ImageId> imagesIds = new ArrayList<ImageId>();
+    ArrayList<JSONObject> arrayJSONObject = new ArrayList<JSONObject>();
 
     static final int RIQUEST_LOCATION = 1;
     public static final int REQUEST_WRITE_STORAGE_REQUEST_CODE = 2;
@@ -127,6 +130,13 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
         cidade  = (Spinner) view.findViewById(R.id.cidade_cadastro);
 
+        if(Hawk.contains("pointsCadastrar")){
+           arrayJSONObject = Hawk.get("pointsCadastrar");
+            for (JSONObject json: arrayJSONObject) {
+                cadastrarPontoColaborador(json);
+            }
+        }
+
         setTextEdits(view);
         setProgressLogin(getActivity());
         locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -157,43 +167,54 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
         progressDialog.show();
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),points.toString());
+        final JSONObject pointsCadastrar = points;
+        if (Utils.verificaConexao(getActivity())) {
+            service
+                .getAPIWithKey()
+                .cadastrarPontoColaborador(body)
+                .enqueue(new Callback<ColaboradorSuper>() {
+                    @Override
+                    public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
 
-        service
-            .getAPIWithKey()
-            .cadastrarPontoColaborador(body)
-            .enqueue(new Callback<ColaboradorSuper>() {
-                @Override
-                public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
+                        ColaboradorSuper result = (ColaboradorSuper) response.body();
+                        if (result != null) {
+                            if (response.code() == 201 || response.code() == 200) {
 
-                    ColaboradorSuper result = (ColaboradorSuper) response.body();
-                    if (result != null) {
-                        if (response.code() == 201 || response.code() == 200) {
+                                createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
+                                progressDialog.dismiss();
+                                getFragmentManager().popBackStack();
 
-                            createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
-                            progressDialog.dismiss();
-                            getFragmentManager().popBackStack();
+                            } else {
+                                createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                                progressDialog.dismiss();
+                            }
                         } else {
+
                             createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
                             progressDialog.dismiss();
                         }
-                    } else {
-                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
+
                         progressDialog.dismiss();
-                    }
-                }
+                        createAlertViewSucesso("Falhou!", "Verifique se está conectado a internet!", getActivity());
+                        arrayJSONObject.add(pointsCadastrar);
+                        Hawk.put("pointsCadastrar", arrayJSONObject);
 
-                @Override
-                public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
-
-                    progressDialog.dismiss();
-                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", getActivity());
-                    try {
-                        throw  new InterruptedException("Erro na comunicação com o servidor!");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        try {
+                            throw new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
+                });
+        }else{
+            createAlertViewSucesso("Falhou!", "Verifique se está conectado a internet!", getActivity());
+            arrayJSONObject.add(pointsCadastrar);
+            Hawk.put("pointsCadastrar", arrayJSONObject);
+        }
     }
 
     public void postImage(JSONObject jsonObject){
@@ -340,6 +361,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
             }
 
             cadastrarPontoColaborador(points);
+
         } else {
             createAlertViewSucesso("Falhou!","Verifique se todos os campos estão preenchidos!", getActivity());
         }

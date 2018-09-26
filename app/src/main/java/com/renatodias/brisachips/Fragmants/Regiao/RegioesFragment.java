@@ -58,42 +58,38 @@ public class RegioesFragment extends Fragment {
         return view;
     }
 
-    public void getRegioes(){
-        {
+    public void getRegioes() {
 
-            progressDialog.show();
+        progressDialog.show();
 
-            service
-                .getAPIWithKey()
-                .getAllRegions()
-                .enqueue(new Callback<List<Regioes>>() {
-                    @Override
-                    public void onResponse(Call<List<Regioes>> call, Response<List<Regioes>> response) {
+        service
+            .getAPIWithKey()
+            .getAllRegions()
+            .enqueue(new Callback<List<Regioes>>() {
+                @Override
+                public void onResponse(Call<List<Regioes>> call, Response<List<Regioes>> response) {
 
-                        List<Regioes> result = response.body();
+                    List<Regioes> result = response.body();
 
-                        if(result != null) {
+                    if(result != null) {
 
-                            Constantes.regioes = result;
-                            createRecyclerView();
-                        }
-                        progressDialog.dismiss();
+                        Constantes.regioes = result;
+                        createRecyclerView();
                     }
+                    progressDialog.dismiss();
+                }
 
-                    @Override
-                    public void onFailure(Call<List<Regioes>> call, Throwable t) {
-                        progressDialog.dismiss();
-                        try {
-                            throw  new InterruptedException("Erro na comunicação com o servidor!");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                @Override
+                public void onFailure(Call<List<Regioes>> call, Throwable t) {
+                    progressDialog.dismiss();
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
-        }
-
-
-    }
+                }
+            });
+}
 
     private void createFloatingActionButton(View view) {
 

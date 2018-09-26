@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.hawk.Hawk;
 import com.renatodias.brisachips.Fragmants.Home.HomeFragment;
 import com.renatodias.brisachips.Fragmants.Regiao.RegioesFragment;
 import com.renatodias.brisachips.Login.LoginActivity;
@@ -116,6 +117,9 @@ public class MenuLateralActivity extends AppCompatActivity
             fragmantManager.beginTransaction().replace(R.id.contenedor, new RegioesFragment()).commit();
             toolbar.setTitle(getString(R.string.title_activity_menu_lateral_regiao));
         } else if (id == R.id.nav_back) {
+
+            Hawk.deleteAll();
+
             Intent mainIntent = new Intent(MenuLateralActivity.this,LoginActivity.class);
             MenuLateralActivity.this.startActivity(mainIntent);
             MenuLateralActivity.this.finish();
