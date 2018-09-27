@@ -54,6 +54,7 @@ public class MenuLateralActivity extends AppCompatActivity
 
     public static Toolbar toolbar;
     public static DrawerLayout drawer;
+    public static MenuItem upload;
     String level = ""+ Constantes.user.getUser_level();
 
     @Override
@@ -90,15 +91,25 @@ public class MenuLateralActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_lateral, menu);
+        upload = menu.findItem(R.id.action_upload);
+        upload.setVisible(false);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
+    public boolean onOptionsItemSelected (MenuItem item){
+        switch (item.getItemId()){
+            case R.id.action_upload:
+                break;
+        }
+        return true;
     }
+
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -145,12 +156,13 @@ public class MenuLateralActivity extends AppCompatActivity
         TextView navUserEmail = (TextView) headerView.findViewById(R.id.header_menu_subetexto);
         navUserEmail.setText(Constantes.user.getEmail());
 
+        Menu nav_Menu = navigationView.getMenu();
         if (!Utils.isSuper(level)) {
-            Menu nav_Menu = navigationView.getMenu();
-            nav_Menu.findItem(R.id.nav_list).setVisible(false);
-            nav_Menu.findItem(R.id.nav_map).setVisible(false);
-        }
 
+            nav_Menu.findItem(R.id.nav_list).setVisible(false);
+//            nav_Menu.findItem(R.id.nav_map).setVisible(false);
+        }
+        nav_Menu.findItem(R.id.nav_map).setVisible(false);
     }
 
     private void setDrawerMenu(){

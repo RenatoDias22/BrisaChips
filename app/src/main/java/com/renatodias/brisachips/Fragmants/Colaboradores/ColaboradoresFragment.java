@@ -120,6 +120,7 @@ public class ColaboradoresFragment extends Fragment {
 
     public void setToolbar(){
         MenuLateralActivity.toolbar.setTitle("Ponto de Venda");
+        MenuLateralActivity.upload.setVisible(false);
     }
 
 

@@ -39,7 +39,6 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
-    Toolbar toolbar;
     HomeAdapter adapter;
 
     NetworkClinet service;
@@ -57,6 +56,9 @@ public class HomeFragment extends Fragment {
         contextView = inflater.inflate(R.layout.fragment_home, container, false);
 
         MenuLateralActivity.toolbar.setTitle("Home");
+        
+        if (MenuLateralActivity.upload != null)
+            MenuLateralActivity.upload.setVisible(false);
 
         Constantes.isFragmentRegiao = false;
 

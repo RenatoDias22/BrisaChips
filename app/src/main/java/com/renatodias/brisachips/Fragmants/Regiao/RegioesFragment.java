@@ -120,6 +120,7 @@ public class RegioesFragment extends Fragment {
     public void setToolbar(){
 
         MenuLateralActivity.toolbar.setTitle("Região");
+        MenuLateralActivity.upload.setVisible(false);
         MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(), MenuLateralActivity.drawer, MenuLateralActivity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

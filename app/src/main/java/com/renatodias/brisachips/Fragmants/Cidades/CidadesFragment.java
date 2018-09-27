@@ -129,6 +129,7 @@ public class CidadesFragment extends Fragment {
     public void setToolbar(){
 
         MenuLateralActivity.toolbar.setTitle("Cidades");
+        MenuLateralActivity.upload.setVisible(false);
         MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
         MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -443,6 +443,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     private void setNavigation() {
         MenuLateralActivity.toolbar.setTitle("Cadastrar Colaborador");
+        MenuLateralActivity.upload.setVisible(true);
         if (Constantes.isFragmentRegiao) {
             MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
             MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
