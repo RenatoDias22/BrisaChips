@@ -15,11 +15,13 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.orhanobut.hawk.Hawk;
+import com.renatodias.brisachips.Fragmants.Cidades.Model.City;
 import com.renatodias.brisachips.Fragmants.Home.Adapter.HomeAdapter;
 import com.renatodias.brisachips.Login.Model.AuthUser;
 import com.renatodias.brisachips.Menu.MenuLateralActivity;
@@ -27,6 +29,9 @@ import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
 import com.renatodias.brisachips.Utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -127,6 +132,8 @@ public class LoginActivity extends AppCompatActivity {
                             Hawk.put("user", Constantes.user);
                             Hawk.put("token", Constantes.token);
 
+                            getCitys();
+
                             Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
                             LoginActivity.this.startActivity(mainIntent);
                             LoginActivity.this.finish();
@@ -186,6 +193,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             Hawk.put("user", Constantes.user);
                             Hawk.put("token", Constantes.token);
+                            getCitys();
 
                             Intent mainIntent = new Intent(LoginActivity.this, MenuLateralActivity.class);
                             LoginActivity.this.startActivity(mainIntent);
@@ -211,6 +219,35 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
             createAlertViewSucesso("Algo deu errado :(", "Verifique se está conectado a internet!");
         }
+    }
+
+    public void getCitys(){
+
+        service
+            .getAPIWithKey()
+            .getAllCitys()
+            .enqueue(new Callback<List<City>>() {
+                @Override
+                public void onResponse(Call<List<City>> call, Response<List<City>> response) {
+
+                    List<City> result = response.body();
+
+                    if(result != null) {
+
+                        Constantes.citys = result;
+                        Hawk.put("TodasCidades", Constantes.citys);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<City>> call, Throwable t) {
+                    try {
+                        throw  new InterruptedException("Erro na comunicação com o servidor!");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     public void createAlertViewSucesso(String title, String subTitulo){
@@ -294,5 +331,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-//66387758
 }

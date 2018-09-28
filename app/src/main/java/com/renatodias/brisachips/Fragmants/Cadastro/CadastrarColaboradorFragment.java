@@ -77,7 +77,7 @@ import retrofit2.Response;
 
 public class CadastrarColaboradorFragment extends Fragment implements LocationListener{
 
-    ProgressDialog progressDialog;
+    static ProgressDialog progressDialog;
 
     NetworkClinet service;
 
@@ -87,7 +87,8 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     String image;
 
     ArrayList<ImageId> imagesIds = new ArrayList<ImageId>();
-    ArrayList<JSONObject> arrayJSONObject = new ArrayList<JSONObject>();
+    ArrayList<String> arrayJSONObject = new ArrayList<>();
+    ArrayList<String> base46 = new ArrayList<>();
 
     static final int RIQUEST_LOCATION = 1;
     public static final int REQUEST_WRITE_STORAGE_REQUEST_CODE = 2;
@@ -130,13 +131,6 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
         cidade  = (Spinner) view.findViewById(R.id.cidade_cadastro);
 
-        if(Hawk.contains("pointsCadastrar")){
-           arrayJSONObject = Hawk.get("pointsCadastrar");
-            for (JSONObject json: arrayJSONObject) {
-                cadastrarPontoColaborador(json);
-            }
-        }
-
         setTextEdits(view);
         setProgressLogin(getActivity());
         locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -167,7 +161,8 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
         progressDialog.show();
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),points.toString());
-        final JSONObject pointsCadastrar = points;
+        final String pointsCadastrar = points.toString();
+
         if (Utils.verificaConexao(getActivity())) {
             service
                 .getAPIWithKey()
@@ -181,6 +176,9 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                             if (response.code() == 201 || response.code() == 200) {
 
                                 createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
+//                                for(int i = 0; i < base46.size();i++){
+//                                    preparePostImage(result.getPoint_id(), base46.get(i));
+//                                }
                                 progressDialog.dismiss();
                                 getFragmentManager().popBackStack();
 
@@ -202,6 +200,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                         createAlertViewSucesso("Falhou!", "Verifique se está conectado a internet!", getActivity());
                         arrayJSONObject.add(pointsCadastrar);
                         Hawk.put("pointsCadastrar", arrayJSONObject);
+                        MenuLateralActivity.upload.setVisible(true);
 
                         try {
                             throw new InterruptedException("Erro na comunicação com o servidor!");
@@ -214,6 +213,70 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
             createAlertViewSucesso("Falhou!", "Verifique se está conectado a internet!", getActivity());
             arrayJSONObject.add(pointsCadastrar);
             Hawk.put("pointsCadastrar", arrayJSONObject);
+            MenuLateralActivity.upload.setVisible(true);
+            progressDialog.dismiss();
+        }
+    }
+
+    public void cadastrarPontoColaboradorCache(String points, final Activity context){
+        progressDialog.show();
+
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),points);
+        final String pointsCadastrar = points;
+
+        if (Utils.verificaConexao(context)) {
+            service
+                .getAPIWithKey()
+                .cadastrarPontoColaborador(body)
+                .enqueue(new Callback<ColaboradorSuper>() {
+                    @Override
+                    public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
+
+                        ColaboradorSuper result = (ColaboradorSuper) response.body();
+                        if (result != null) {
+                            if (response.code() == 201 || response.code() == 200) {
+
+                                createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", context);
+//                                for(int i = 0; i < base46.size();i++){
+//                                    preparePostImage(result.getPoint_id(), base46.get(i));
+//                                }
+
+
+                            } else {
+                                if (response.code() == 409 ) {
+                                    createAlertViewSucesso("Ops!", "E-mail já cadastrado!", context);
+                                } else {
+                                    createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", context);
+
+                                }
+                            }
+                            MenuLateralActivity.upload.setVisible(false);
+                            progressDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
+
+                        createAlertViewSucesso("Falhou!", "Verifique se está conectado a internet!", context);
+                        arrayJSONObject.add(pointsCadastrar);
+                        Hawk.put("pointsCadastrar", arrayJSONObject);
+                        MenuLateralActivity.upload.setVisible(true);
+                        progressDialog.dismiss();
+
+                        try {
+                            throw new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        }else{
+            createAlertViewSucesso("Falhou!", "Verifique se está conectado a internet!", context);
+            arrayJSONObject.add(pointsCadastrar);
+            Hawk.put("pointsCadastrar", arrayJSONObject);
+            MenuLateralActivity.upload.setVisible(true);
+            progressDialog.dismiss();
         }
     }
 
@@ -256,25 +319,31 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     public void getCitys(){
 
-        progressDialog.show();
+        if (Utils.verificaConexao(getActivity())) {
+            progressDialog.show();
 
-        service
-            .getAPIWithKey()
-            .getAllCitys()
-            .enqueue(new Callback<List<City>>() {
-                @Override
-                public void onResponse(Call<List<City>> call, Response<List<City>> response) {
+            service
+                .getAPIWithKey()
+                .getAllCitys()
+                .enqueue(new Callback<List<City>>() {
+                    @Override
+                    public void onResponse(Call<List<City>> call, Response<List<City>> response) {
 
-                    List<City> result = response.body();
+                        List<City> result = response.body();
 
-                    if(result != null) {
+                        if (result != null) {
 
-                        Constantes.citys = result;
+                            Constantes.citys = result;
+                            Hawk.put("TodasCidades",Constantes.citys);
+
+                        } else {
+                            Constantes.citys = Hawk.get("TodasCidades");
+                        }
 
                         ArrayList<String> items = new ArrayList<String>();
                         items.add("Cidades");
-                        for (int i = 1 ; i<= Constantes.citys.size(); i++){
-                            items.add(Constantes.citys.get(i-1).getName().toString());
+                        for (int i = 1; i <= Constantes.citys.size(); i++) {
+                            items.add(Constantes.citys.get(i - 1).getName().toString());
                         }
 
                         ArrayAdapter<String> itemsAdapter =
@@ -283,19 +352,48 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                         cidade.setAdapter(itemsAdapter);
 
                         progressDialog.dismiss();
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<List<City>> call, Throwable t) {
-                    progressDialog.dismiss();
-                    try {
-                        throw  new InterruptedException("Erro na comunicação com o servidor!");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
-                }
-            });
+
+                    @Override
+                    public void onFailure(Call<List<City>> call, Throwable t) {
+                        Constantes.citys = Hawk.get("TodasCidades");
+
+                        ArrayList<String> items = new ArrayList<String>();
+                        items.add("Cidades");
+                        for (int i = 1; i <= Constantes.citys.size(); i++) {
+                            items.add(Constantes.citys.get(i - 1).getName().toString());
+                        }
+
+                        ArrayAdapter<String> itemsAdapter =
+                                new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, items);
+
+                        cidade.setAdapter(itemsAdapter);
+
+                        progressDialog.dismiss();
+                        try {
+                            throw new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        }else {
+            Constantes.citys = Hawk.get("TodasCidades");
+
+            ArrayList<String> items = new ArrayList<String>();
+            items.add("Cidades");
+            for (int i = 1; i <= Constantes.citys.size(); i++) {
+                items.add(Constantes.citys.get(i - 1).getName().toString());
+            }
+
+            ArrayAdapter<String> itemsAdapter =
+                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, items);
+
+            cidade.setAdapter(itemsAdapter);
+
+            progressDialog.dismiss();
+        }
     }
 
     public void getCAmera(Activity activity, int CODE) {
@@ -306,10 +404,10 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     }
 
     public void ClickCadastrar(){
-
+        String cpf_cnpjString = CpfCnpjMaks.unmask(cpf_cnpj.getText().toString());
 
         if (nome_empresa.getText().toString() != "" &&
-                cpf_cnpj.getText().toString() != "" &&
+                cpf_cnpjString != "" &&
                 nome_telefone_1.getText().toString() != "" &&
                 nome_email.getText().toString() != "" &&
                 nome_endereco.getText().toString() != "" &&
@@ -321,7 +419,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 user.put("level", "3");
                 user.put("fantasy_name", nome_fantasia.getText().toString());
                 user.put("name", nome_empresa.getText().toString());
-                user.put("cnpj", cpf_cnpj.getText().toString());
+                user.put("cnpj", cpf_cnpjString);
                 user.put("uf_number", nome_incricao_estadual.getText().toString());
                 user.put("city_number", nome_incricao_municial.getText().toString());
                 user.put("phone1", nome_telefone_1.getText().toString());
@@ -443,7 +541,11 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     private void setNavigation() {
         MenuLateralActivity.toolbar.setTitle("Cadastrar Colaborador");
-        MenuLateralActivity.upload.setVisible(true);
+
+        if (Hawk.contains("pointsCadastrar")) {
+            MenuLateralActivity.upload.setVisible(true);
+        }
+
         if (Constantes.isFragmentRegiao) {
             MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
             MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -457,21 +559,14 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     public int conteudoPositionSpinner(){
         return cidade.getSelectedItemPosition();
-//        if(posicao == 0){
-//
-//        }else {
-//            String itemSelecionado = Constantes.citys.get(posicao).getName();
-//        }
     }
 
     public JSONArray idsFoto(){
 
         JSONArray ids = new JSONArray();
 
-//        int[] ids = new int[imagesIds.size()];
         for (int i = 0; i < imagesIds.size(); i++){
             ids.put(imagesIds.get(i).getId());
-//            ids[i] = ;
         }
         return ids;
     }
@@ -502,7 +597,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     }
 
-    public void createAlertViewSucesso(String title, String subTitulo, Context context){
+    public static void createAlertViewSucesso(String title, String subTitulo, Context context){
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -546,20 +641,26 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
             image = ConvertBitmapToString(resizedBitmap);
 
-            JSONObject imageJson = new JSONObject();
-            try {
-                imageJson.put("image", image);
-
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            postImage(imageJson);
+            base46.add(image);
 
             Upload();
         }
 
+    }
+
+    public void preparePostImage(int point_id, String base64){
+
+        JSONObject imageJson = new JSONObject();
+        try {
+            imageJson.put("point_id", point_id);
+            imageJson.put("image", base64);
+
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        postImage(imageJson);
     }
 
     public static String ConvertBitmapToString(Bitmap bitmap){
@@ -669,5 +770,20 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
             }
         }
 
+    }
+
+    public void updatePontos(Activity context){
+        if (Utils.verificaConexao(context)) {
+            if (Hawk.contains("pointsCadastrar")) {
+                ArrayList<String> jsonArray = Hawk.get("pointsCadastrar");
+                Hawk.delete("pointsCadastrar");
+                arrayJSONObject = new ArrayList<>();
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    cadastrarPontoColaboradorCache(jsonArray.get(i), context);
+                }
+            }
+        } else {
+            createAlertViewSucesso("Falhou!", "Verifique se está conectado a internet!", context);
+        }
     }
 }

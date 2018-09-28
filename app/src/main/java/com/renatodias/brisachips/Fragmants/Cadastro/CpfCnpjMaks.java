@@ -70,7 +70,7 @@ public abstract class CpfCnpjMaks {
         };
     }
 
-    private static String getDefaultMask(String str) {
+    public static String getDefaultMask(String str) {
         String defaultMask = maskCPF;
         if (str.length() > 11){
             defaultMask = maskCNPJ;

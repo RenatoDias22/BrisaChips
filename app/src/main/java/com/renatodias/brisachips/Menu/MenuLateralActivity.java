@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
+import com.renatodias.brisachips.Fragmants.Cadastro.CadastrarColaboradorFragment;
 import com.renatodias.brisachips.Fragmants.Home.HomeFragment;
 import com.renatodias.brisachips.Fragmants.Regiao.RegioesFragment;
 import com.renatodias.brisachips.Login.LoginActivity;
@@ -100,6 +101,8 @@ public class MenuLateralActivity extends AppCompatActivity
     public boolean onOptionsItemSelected (MenuItem item){
         switch (item.getItemId()){
             case R.id.action_upload:
+                CadastrarColaboradorFragment c = new CadastrarColaboradorFragment();
+                c.updatePontos(this);
                 break;
         }
         return true;

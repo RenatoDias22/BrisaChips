@@ -16,6 +16,9 @@ public class ColaboradorSuper {
     @SerializedName("message")
     private String message;
 
+    @SerializedName("point_id")
+    private int point_id;
+
 
     public String getCity() {
         return city;
@@ -23,6 +26,10 @@ public class ColaboradorSuper {
 
     public String getMessage() {
         return message;
+    }
+
+    public int getPoint_id() {
+        return point_id;
     }
 
     public List<Orders> getOrders() {
