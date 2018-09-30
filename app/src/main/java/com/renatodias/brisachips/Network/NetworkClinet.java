@@ -8,6 +8,8 @@ import com.renatodias.brisachips.Fragmants.Regiao.Model.Regioes;
 import com.renatodias.brisachips.Login.Model.AuthUser;
 import com.renatodias.brisachips.Utils.Constantes;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

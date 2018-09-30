@@ -88,7 +88,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
     ArrayList<ImageId> imagesIds = new ArrayList<ImageId>();
     ArrayList<String> arrayJSONObject = new ArrayList<>();
-    ArrayList<String> base46 = new ArrayList<>();
+    ArrayList<Bitmap> base46 = new ArrayList<Bitmap>();
 
     static final int RIQUEST_LOCATION = 1;
     public static final int REQUEST_WRITE_STORAGE_REQUEST_CODE = 2;
@@ -176,9 +176,9 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                             if (response.code() == 201 || response.code() == 200) {
 
                                 createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", getActivity());
-//                                for(int i = 0; i < base46.size();i++){
-//                                    preparePostImage(result.getPoint_id(), base46.get(i));
-//                                }
+                                for(int i = 0; i < base46.size();i++){
+                                    preparePostImage(result.getPoint_id(), base46.get(i));
+                                }
                                 progressDialog.dismiss();
                                 getFragmentManager().popBackStack();
 
@@ -237,10 +237,9 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                             if (response.code() == 201 || response.code() == 200) {
 
                                 createAlertViewSucesso("Sucesso!", "Ponto de venda adicionado com sucesso!", context);
-//                                for(int i = 0; i < base46.size();i++){
-//                                    preparePostImage(result.getPoint_id(), base46.get(i));
-//                                }
-
+                                for(int i = 0; i < base46.size();i++){
+                                    preparePostImage(result.getPoint_id(), base46.get(i));
+                                }
 
                             } else {
                                 if (response.code() == 409 ) {
@@ -280,9 +279,9 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
         }
     }
 
-    public void postImage(JSONObject jsonObject){
+    public void postImage(String jsonObject){
         progressDialog.show();
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),jsonObject.toString());
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),jsonObject);
 
         service
             .getAPIWithKey()
@@ -294,11 +293,11 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                     ImageId result = (ImageId) response.body();
                     if(result != null) {
                         imagesIds.add(result);
-                        createAlertViewSucesso("Sucesso!", "Imagem enviada com sucesso!", getActivity());
+//                        createAlertViewSucesso("Sucesso!", "Imagem enviada com sucesso!", getActivity());
                         progressDialog.dismiss();
 
                     }else {
-                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+//                        createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
                         progressDialog.dismiss();
                     }
                 }
@@ -307,7 +306,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 public void onFailure(Call<ImageId> call, Throwable t) {
 
                     progressDialog.dismiss();
-                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", getActivity());
+//                    createAlertViewSucesso("Falhou!","Verifique se está conectado a internet!", getActivity());
                     try {
                         throw  new InterruptedException("Erro na comunicação com o servidor!");
                     } catch (InterruptedException e) {
@@ -422,7 +421,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 user.put("cnpj", cpf_cnpjString);
                 user.put("uf_number", nome_incricao_estadual.getText().toString());
                 user.put("city_number", nome_incricao_municial.getText().toString());
-                user.put("phone1", nome_telefone_1.getText().toString());
+                user.put("phone1", "(11)9911-64744");//nome_telefone_1.getText().toString());
                 user.put("phone2", nome_telefone_2.getText().toString());
                 user.put("contact", nome_email.getText().toString());
                 user.put("city", Constantes.citys.get(conteudoPositionSpinner()-1).getId());
@@ -639,28 +638,29 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-            image = ConvertBitmapToString(resizedBitmap);
 
-            base46.add(image);
+            base46.add(resizedBitmap);
 
             Upload();
         }
 
     }
 
-    public void preparePostImage(int point_id, String base64){
+    public void preparePostImage(int point_id, Bitmap base64){
+
+        image = ConvertBitmapToString(base64);
 
         JSONObject imageJson = new JSONObject();
         try {
             imageJson.put("point_id", point_id);
-            imageJson.put("image", base64);
+            imageJson.put("image", image);
 
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        postImage(imageJson);
+        postImage(imageJson.toString());
     }
 
     public static String ConvertBitmapToString(Bitmap bitmap){
