@@ -453,7 +453,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 user.put("cnpj", cpf_cnpjString);
                 user.put("uf_number", nome_incricao_estadual.getText().toString());
                 user.put("city_number", nome_incricao_municial.getText().toString());
-                user.put("phone1", "(11)9911-64744");//nome_telefone_1.getText().toString());
+                user.put("phone1", nome_telefone_1.getText().toString());
                 user.put("phone2", nome_telefone_2.getText().toString());
                 user.put("contact", nome_email.getText().toString());
                 user.put("city", Constantes.citys.get(conteudoPositionSpinner()-1).getId());
