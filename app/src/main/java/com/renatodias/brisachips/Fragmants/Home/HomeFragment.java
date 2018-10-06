@@ -28,10 +28,14 @@ import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
 import com.renatodias.brisachips.Utils.Utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,11 +67,6 @@ public class HomeFragment extends Fragment {
         Constantes.isFragmentRegiao = false;
 
         setProgressLogin(getActivity());
-
-//        if(Constantes.id_pontos_colaborador != ""){
-//            getCitysOrdesColaborador(false);
-//            createFloatingActionButton();
-//        } else {
 
             if (Utils.isSuper(level)) {
                 getCitysOrdesSuper(false, null);
@@ -117,50 +116,6 @@ public class HomeFragment extends Fragment {
                 }
         });
     }
-
-
-//    public void getCitysOrdesColaborador(final boolean atualization){
-//
-//        progressDialog.show();
-//
-////        int id = Integer.parseInt(Constantes.id_pontos_colaborador);
-//
-//        HashMap<String, Integer> jsonParams = new HashMap<>();
-////        jsonParams.put("id", id);
-//
-//        service
-//            .getAPIWithKey()
-//            .getOrdesColaborador(jsonParams)
-//            .enqueue(new Callback<ColaboradorSuper>() {
-//                @Override
-//                public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
-//
-//                    ColaboradorSuper result = (ColaboradorSuper) response.body();
-//
-//                    if(result != null) {
-//
-//                        Constantes.colaborador = result;
-//                        if (!atualization)
-//                            createRecyclerView();
-//                        else
-//                            loadRecycleViewCitysColaborador();
-//
-//                        progressDialog.dismiss();
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<ColaboradorSuper> call, Throwable t) {
-//                    progressDialog.dismiss();
-//                    try {
-//                        throw  new InterruptedException("Erro na comunicação com o servidor!");
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            });
-//    }
-
 
     public void getCitysOrdes(final boolean atualization){
 
@@ -218,11 +173,6 @@ public class HomeFragment extends Fragment {
                     if (result != null) {
                         if (response.code() == 201) {
                             getCitysOrdes(true);
-//                        if(Constantes.id_pontos_colaborador != "") {
-//                            getCitysOrdesColaborador(true);
-//                        }else{
-//                            getCitysOrdes(true);
-//                        }
                             createAlertViewSucesso("Sucesso!", result.getMessage(), c);
                         }else{
                             createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", c);
@@ -247,15 +197,37 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void postAskForAcceptOrder(int id, Context context, HomeAdapter adapteraux2){
+    public void postAskForAcceptOrder(int id, Double valorPedido, Context context, HomeAdapter adapteraux2){
         setProgressLogin(context);
         progressDialog.show();
         final Context c = context;
         final HomeAdapter adapteraux = adapteraux2;
 
+        JSONObject json = new JSONObject();
+
+        if(valorPedido != null){
+            try {
+                json.put("id", id);
+                json.put("prince", valorPedido);
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                json.put("id", id);
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),json.toString());
+
+
         service
             .getAPIWithKey()
-            .askForAcceptOrder(id)
+            .askForAcceptOrder(body)
             .enqueue(new Callback<ColaboradorSuper>() {
                 @Override
                 public void onResponse(Call<ColaboradorSuper> call, Response<ColaboradorSuper> response) {
@@ -471,7 +443,55 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                postAskForAcceptOrder(idClick, v.getContext(), adapteraux2);
+                postAskForAcceptOrder(idClick, null, v.getContext(), adapteraux2);
+                dialog.dismiss();
+
+            }
+        });
+
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void createAlertViewAtenderPedido(String title, String subTitulo, int id, Context context, HomeAdapter adapteraux){
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View viewDialog = inflater.inflate(R.layout.dialog_home_pedidos, null);
+
+        TextView titulo = viewDialog.findViewById(R.id.peca_chip_item);
+        titulo.setText(title);
+
+        TextView sub = viewDialog.findViewById(R.id.peca_chip_item_sub);
+        sub.setText(subTitulo);
+
+        final TextView atenderPedido = viewDialog.findViewById(R.id.quantidade_item_alert);
+
+        Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
+        pedir.setText("Atender");
+
+        Button cancelar = (Button) viewDialog.findViewById(R.id.cancelar_dialog_button);
+        cancelar.setText("Recusar");
+
+        final int idClick = id;
+        final HomeAdapter adapteraux2 = adapteraux;
+
+        mBuilder.setView(viewDialog);
+        final AlertDialog dialog = mBuilder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        pedir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Double orderCount = Double.parseDouble(atenderPedido.getText().toString());
+                postAskForAcceptOrder(idClick, orderCount,v.getContext(), adapteraux2);
                 dialog.dismiss();
 
             }

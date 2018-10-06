@@ -39,6 +39,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.orhanobut.hawk.Hawk;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.ImageId;
 import com.renatodias.brisachips.Fragmants.Cadastro.Model.SalveCachePonto;
@@ -68,6 +69,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -106,6 +108,8 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
     EditText nome_email;
     EditText nome_bairro;
     EditText nome_endereco;
+    EditText amount;
+    EditText prince;
 
     Switch card_machine;
 
@@ -476,6 +480,17 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 e.printStackTrace();
             }
 
+
+            JSONObject order = new JSONObject();
+            try {
+                order.put("amount", amount.getText().toString());
+                order.put("price", prince.getText().toString());
+
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
             JSONArray ids = idsFoto();
 
             JSONObject points = new JSONObject();
@@ -483,6 +498,7 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                 points.put("user", user);
                 points.put("position", position);
                 points.put("images", ids);
+                points.put("order", order);
 
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
@@ -520,6 +536,10 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
         nome_bairro = (EditText) view.findViewById(R.id.bairro_cadastro);
 //        setOnEditorActionListenerEditText(nome_bairro,nome_email);
         nome_endereco = (EditText) view.findViewById(R.id.endereco_cadastro);
+
+        amount = (EditText) view.findViewById(R.id.qtd_chip);
+        prince = (EditText) view.findViewById(R.id.valor_chips);
+
 
     }
 

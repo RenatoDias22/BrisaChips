@@ -106,14 +106,11 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 VHome.quantidade.setText(qtd);
 
                 switch (status) {
-                    case "0":
-                        VHome.status.setText("DESPACHE ");
-                        break;
                     case "1":
                         VHome.status.setText("PENDENTE ");
                         break;
                     case "2":
-                        VHome.status.setText("ATENDIDO");
+                        VHome.status.setText("DESPACHE ");
                         break;
                     case "3":
                         VHome.status.setText("RECEBIDO ");
@@ -180,11 +177,16 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     if(Utils.isSuper(level)) {
-                        if (status.getText().toString().equals("PENDENTE ") || status.getText().toString().equals("ATENDIDO")) {
+                        if (!status.getText().toString().equals("PENDENTE ") && !status.getText().toString().equals("CANCELADO")) {
                             int id = Integer.parseInt(pedido.getText().toString());
                             HomeFragment f = new HomeFragment();
                             f.createAlertViewAtender("Atender Pedido", "Deseja atender a esté pedido?", id, v.getContext(), adapteraux);
-
+                        } else {
+                            if (status.getText().toString().equals("PENDENTE ")) {
+                                int id = Integer.parseInt(pedido.getText().toString());
+                                HomeFragment f = new HomeFragment();
+                                f.createAlertViewAtenderPedido("Atender Pedido", "Deseja atender a esté pedido?", id, v.getContext(), adapteraux);
+                            }
                         }
                     }
                 }
