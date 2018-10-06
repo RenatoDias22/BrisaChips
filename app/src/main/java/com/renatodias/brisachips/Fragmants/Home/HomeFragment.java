@@ -208,7 +208,7 @@ public class HomeFragment extends Fragment {
         if(valorPedido != null){
             try {
                 json.put("id", id);
-                json.put("prince", valorPedido);
+                json.put("price", valorPedido);
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

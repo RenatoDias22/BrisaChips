@@ -483,8 +483,8 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
 
             JSONObject order = new JSONObject();
             try {
-                order.put("amount", amount.getText().toString());
-                order.put("price", prince.getText().toString());
+                order.put("amount", Integer.parseInt(amount.getText().toString()));
+                order.put("price", Double.parseDouble(prince.getText().toString()));
 
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
