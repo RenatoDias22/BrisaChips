@@ -177,7 +177,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     if(Utils.isSuper(level)) {
-                        if (!status.getText().toString().equals("PENDENTE ") && !status.getText().toString().equals("CANCELADO")) {
+                        if (!status.getText().toString().equals("PENDENTE ") && !status.getText().toString().equals("CANCELADO") && !status.getText().toString().equals("RECEBIDO ")) {
                             int id = Integer.parseInt(pedido.getText().toString());
                             HomeFragment f = new HomeFragment();
                             f.createAlertViewAtender("Atender Pedido", "Deseja atender a esté pedido?", id, v.getContext(), adapteraux);
@@ -185,7 +185,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                             if (status.getText().toString().equals("PENDENTE ")) {
                                 int id = Integer.parseInt(pedido.getText().toString());
                                 HomeFragment f = new HomeFragment();
-                                f.createAlertViewAtenderPedido("Atender Pedido", "Deseja atender a esté pedido?", id, v.getContext(), adapteraux);
+                                f.createAlertViewAtenderPedido("Atender Pedido Pendente", "Deseja atender a esté pedido?", id, v.getContext(), adapteraux);
                             }
                         }
                     }

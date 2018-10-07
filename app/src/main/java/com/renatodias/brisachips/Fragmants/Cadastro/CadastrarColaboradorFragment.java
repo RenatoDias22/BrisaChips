@@ -184,18 +184,21 @@ public class CadastrarColaboradorFragment extends Fragment implements LocationLi
                                 for(int i = 0; i < base64.size();i++){
                                     preparePostImage(result.getPoint_id(), base64.get(i));
                                 }
-                                progressDialog.dismiss();
                                 getFragmentManager().popBackStack();
 
                             } else {
                                 createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
-                                progressDialog.dismiss();
                             }
                         } else {
 
-                            createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
-                            progressDialog.dismiss();
+                            if (response.code() == 409 ) {
+                                createAlertViewSucesso("Ops!", "E-mail já cadastrado!", getActivity());
+                            } else {
+                                createAlertViewSucesso("Ops!", "Seu pedido falhou, tente novamente!", getActivity());
+
+                            }
                         }
+                        progressDialog.dismiss();
                     }
 
                     @Override

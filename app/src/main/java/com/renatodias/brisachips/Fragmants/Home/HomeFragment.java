@@ -471,6 +471,7 @@ public class HomeFragment extends Fragment {
         sub.setText(subTitulo);
 
         final TextView atenderPedido = viewDialog.findViewById(R.id.quantidade_item_alert);
+        atenderPedido.setHint("Valor dos chips");
 
         Button pedir = (Button) viewDialog.findViewById(R.id.pedir_dialog_button);
         pedir.setText("Atender");
