@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,7 @@ import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
+import com.renatodias.brisachips.Utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,15 +55,19 @@ public class CidadesFragment extends Fragment {
 
         final FragmentActivity context = getActivity();
 
-        setToolbar();
-
-        Constantes.isFragmentRegiao = false;
-
         createFloatingActionButton(view);
 
         setProgressLogin(getActivity());
-        getCitys();
+        if(!Utils.isSubSuper(Constantes.user.getUser_level())) {
+            getCitys();
+            setToolbar();
+            Constantes.isFragmentRegiao = false;
 
+        }else{
+            getAllCitys();
+            Constantes.isFragmentRegiao = true;
+            setToolbarAllcitys();
+        }
         return view;
     }
 
@@ -71,7 +77,7 @@ public class CidadesFragment extends Fragment {
 
         service
             .getAPIWithKey()
-            .getAllCitys(Constantes.url_id_cidade)
+            .getCitys(Constantes.url_id_cidade)
             .enqueue(new Callback<List<City>>() {
                 @Override
                 public void onResponse(Call<List<City>> call, Response<List<City>> response) {
@@ -96,6 +102,39 @@ public class CidadesFragment extends Fragment {
                     }
                 }
             });
+    }
+
+    public void getAllCitys(){
+
+        progressDialog.show();
+
+        service
+                .getAPIWithKey()
+                .getAllCitys()
+                .enqueue(new Callback<List<City>>() {
+                    @Override
+                    public void onResponse(Call<List<City>> call, Response<List<City>> response) {
+
+                        List<City> result = response.body();
+
+                        if(result != null) {
+
+                            Constantes.citys = result;
+                            createRecyclerView();
+                        }
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<City>> call, Throwable t) {
+                        progressDialog.dismiss();
+                        try {
+                            throw  new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     public void createRecyclerView(){
@@ -137,6 +176,17 @@ public class CidadesFragment extends Fragment {
                 getFragmentManager().popBackStack();
             }
         });
+    }
+
+    public void setToolbarAllcitys(){
+
+        MenuLateralActivity.toolbar.setTitle("Cidades");
+        MenuLateralActivity.upload.setVisible(false);
+        MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                getActivity(), MenuLateralActivity.drawer, MenuLateralActivity.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        MenuLateralActivity.drawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
     private void setProgressLogin(Context context) {

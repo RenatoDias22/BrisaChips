@@ -13,6 +13,13 @@ public class Utils {
         return false;
     }
 
+    public static boolean isSubSuper(String value){
+        if (!value.equals("0")) {
+            return true;
+        }
+        return false;
+    }
+
     @SuppressLint("MissingPermission")
     public static boolean verificaConexao(Activity activity) {
         boolean conectado;

@@ -63,7 +63,7 @@ public class NetworkClinet  {
         Call<List<Regioes>> getAllRegions();
 
         @GET("regions/{pk}/")
-        Call<List<City>> getAllCitys(@Path(value = "pk", encoded = true) String pk);
+        Call<List<City>> getCitys(@Path(value = "pk", encoded = true) String pk);
 
         @GET("cities/")
         Call<List<City>> getAllCitys();

@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
 import com.renatodias.brisachips.Fragmants.Cadastro.CadastrarColaboradorFragment;
+import com.renatodias.brisachips.Fragmants.Cidades.CidadesFragment;
 import com.renatodias.brisachips.Fragmants.Home.HomeFragment;
 import com.renatodias.brisachips.Fragmants.Regiao.RegioesFragment;
 import com.renatodias.brisachips.Login.LoginActivity;
@@ -125,11 +126,15 @@ public class MenuLateralActivity extends AppCompatActivity
             fragmantManager.beginTransaction().replace(R.id.contenedor, new HomeFragment()).commit();
             toolbar.setTitle(getString(R.string.title_activity_menu_lateral_home));
         } else if (id == R.id.nav_list) {
-            fragmantManager.beginTransaction().replace(R.id.contenedor, new RegioesFragment()).commit();
-            toolbar.setTitle(getString(R.string.title_activity_menu_lateral_regiao));
+            if(!Utils.isSubSuper(Constantes.user.getUser_level())) {
+                fragmantManager.beginTransaction().replace(R.id.contenedor, new RegioesFragment()).commit();
+                toolbar.setTitle(getString(R.string.title_activity_menu_lateral_regiao));
+            }else {
+                fragmantManager.beginTransaction().replace(R.id.contenedor, new CidadesFragment()).commit();
+                toolbar.setTitle("Cidades");
+            }
         } else if (id == R.id.nav_map) {
-            fragmantManager.beginTransaction().replace(R.id.contenedor, new RegioesFragment()).commit();
-            toolbar.setTitle(getString(R.string.title_activity_menu_lateral_regiao));
+
         } else if (id == R.id.nav_back) {
 
             Hawk.deleteAll();

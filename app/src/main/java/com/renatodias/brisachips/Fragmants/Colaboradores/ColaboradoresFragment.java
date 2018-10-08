@@ -27,6 +27,7 @@ import com.renatodias.brisachips.Menu.MenuLateralActivity;
 import com.renatodias.brisachips.Network.NetworkClinet;
 import com.renatodias.brisachips.R;
 import com.renatodias.brisachips.Utils.Constantes;
+import com.renatodias.brisachips.Utils.Utils;
 
 import java.util.List;
 
@@ -119,8 +120,19 @@ public class ColaboradoresFragment extends Fragment {
     }
 
     public void setToolbar(){
-        MenuLateralActivity.toolbar.setTitle("Ponto de Venda");
-        MenuLateralActivity.upload.setVisible(false);
+        if(Utils.isSubSuper(Constantes.user.getUser_level())) {
+            MenuLateralActivity.toolbar.setTitle("Ponto de Venda");
+            MenuLateralActivity.upload.setVisible(false);
+        }else {
+            MenuLateralActivity.upload.setVisible(false);
+            MenuLateralActivity.toolbar.setNavigationIcon(R.drawable.ic_menu_back);
+            MenuLateralActivity.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getFragmentManager().popBackStack();
+                }
+            });
+        }
     }
 
 
